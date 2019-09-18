@@ -5,6 +5,7 @@ import './firebase';
 import vuetify from './plugins/vuetify';
 
 Vue.config.productionTip = false
+Vue.use(vuetify)
 
 new Vue({
   router,

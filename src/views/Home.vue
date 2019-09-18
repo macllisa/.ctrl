@@ -12,6 +12,7 @@ import HelloWorld from '@/components/HelloWorld.vue'
 import CadastroUsuario from './CadastroUsuario.vue'
 
 export default {
+  name: 'home',
   components: {
     HelloWorld,
     CadastroUsuario
