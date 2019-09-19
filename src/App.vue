@@ -17,17 +17,20 @@
 
     <v-content>
       <HelloWorld/>
+      <CadastroUsuario /> 
     </v-content>
   </v-app>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld';
+import CadastroUsuario from './views/CadastroUsuario.vue'
 
 export default {
   name: 'App',
   components: {
     HelloWorld,
+    CadastroUsuario
   },
   data: () => ({
     //
