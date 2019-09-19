@@ -11,4 +11,4 @@ const fire = firebase.initializeApp({
 });
 
 export const db = fire.firestore();
-// export const usersCollection = db.collection('usuarios');
+export const usersCollection = db.collection('usuarios');
