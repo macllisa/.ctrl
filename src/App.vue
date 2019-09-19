@@ -3,7 +3,7 @@
     <v-app-bar app>
       <v-toolbar-title class="headline text-uppercase">
         <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
+        <span class="font-weight-light">MATERIAL DESoooooIGN</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn
