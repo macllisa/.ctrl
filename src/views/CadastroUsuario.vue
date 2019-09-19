@@ -33,23 +33,28 @@ export default {
     validarFormularioCadastro() {
         return this.$refs.form.validate()
     },
-    cadastrarUsuarioFirestore() {
-        usersCollection.add({
-            email: this.email,
-            createdAt: new Date(),
-            updatedAt: new Date()
-        }) // .doc(ID DO CARA LOGADO)
-        .then(function(docRef) {
-            console.log("Usuário cadastrado no Firestore com sucesso. ID: ", docRef.id); /* eslint-disable-line no-console */
-        })
-        .catch(function(error) {
-            console.log("Erro ao cadastrar usuário no Firestore: ", error); /* eslint-disable-line no-console */
-        })
+    cadastrarUsuarioFirestore(idUsuario) {
+        if (idUsuario != null && idUsuario != "") {
+            usersCollection.doc(idUsuario).set({
+                email: this.email,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            })
+            .then(function() {
+                console.log("Usuário cadastrado no Firestore com sucesso! "); /* eslint-disable-line no-console */
+            })
+            .catch(function(error) {
+                console.log("Erro ao cadastrar usuário no Firestore: ", error); /* eslint-disable-line no-console */
+            })
+        } else {
+            console.log("ID do usuario indefinido ou nulo") /* eslint-disable-line no-console */
+        }
     },
     cadastrarUsuarioComEmailESenha(email, senha) {
         firebase.auth().createUserWithEmailAndPassword(email, senha).then(
             (user) => {
                 console.log("Usuário cadastrado com sucesso: ", user); /* eslint-disable-line no-console */
+                this.cadastrarUsuarioFirestore(user.user.uid)
                 // TODO alert avisando o usuário que foi cadastrado com sucesso
             },
             (error) => {
@@ -57,7 +62,6 @@ export default {
                 // TODO alert avisando o usuário que ocorreu algum erro
             }
         )
-        this.cadastrarUsuarioFirestore()
     },
 	cadastrarUsuario() {
         if (this.validarFormularioCadastro()) {
@@ -68,22 +72,26 @@ export default {
         }
     },
     validarFormularioLogin() {
+        console.log("cheguei aqiu1") /* eslint-disable-line no-console */
         return this.$refs.form.validate()
     },
     loginComEmailESenha(email, senha) {
+        console.log("cheguei aqiu3") /* eslint-disable-line no-console */
         firebase.auth().signInWithEmailAndPassword(email, senha).then(
             () => {
                 console.log("Logado com sucesso "); /* eslint-disable-line no-console */
                 // TODO ROUTER REPLACE
-                this.$router.replace('about')
+                console.log("cheguei aqiu4") /* eslint-disable-line no-console */
             },
             () => {
+                console.log("cheguei aqiu5") /* eslint-disable-line no-console */
                 console.log("Erro ao logar"); /* eslint-disable-line no-console */
             }
         )
     },
     realizarLogin() {
         if (this.validarFormularioLogin()) {
+            console.log("cheguei aqiu2") /* eslint-disable-line no-console */
             this.loginComEmailESenha(this.email, this.senha)
         } else {
             console.log("Formulário inválido "); /* eslint-disable-line no-console */
