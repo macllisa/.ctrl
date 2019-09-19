@@ -72,26 +72,21 @@ export default {
         }
     },
     validarFormularioLogin() {
-        console.log("cheguei aqiu1") /* eslint-disable-line no-console */
         return this.$refs.form.validate()
     },
     loginComEmailESenha(email, senha) {
-        console.log("cheguei aqiu3") /* eslint-disable-line no-console */
         firebase.auth().signInWithEmailAndPassword(email, senha).then(
             () => {
                 console.log("Logado com sucesso "); /* eslint-disable-line no-console */
                 // TODO ROUTER REPLACE
-                console.log("cheguei aqiu4") /* eslint-disable-line no-console */
             },
             () => {
-                console.log("cheguei aqiu5") /* eslint-disable-line no-console */
                 console.log("Erro ao logar"); /* eslint-disable-line no-console */
             }
         )
     },
     realizarLogin() {
         if (this.validarFormularioLogin()) {
-            console.log("cheguei aqiu2") /* eslint-disable-line no-console */
             this.loginComEmailESenha(this.email, this.senha)
         } else {
             console.log("Formulário inválido "); /* eslint-disable-line no-console */
