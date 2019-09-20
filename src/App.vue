@@ -1,8 +1,19 @@
 <template>
+   <router-view></router-view>
 </template>
 
 <script>
-export default {
+import { routes } from './routes';
 
+export default {
+    data(){
+        return{
+            routes
+        }
+    }
 }
 </script>
+
+<style scoped>
+</style>
+
