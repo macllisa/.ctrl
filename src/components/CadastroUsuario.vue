@@ -3,31 +3,27 @@
     <header>
         <img src="../assets/images/logo.png">
     </header>
-    <form id="formCadastro" class="formCadastro">
+    <v-form ref='form' id="formCadastro" class="formCadastro">
         <div class="titulo"><label>CADASTRO:</label></div>
         <div class="cadastroInput">
             <label><b>NOME:</b></label>
-            <input id="nomeCadastro" type="text" name="nome">
+            <input id="nomeCadastro" type="text" v-model="nome" required>
         </div>
         <div class="cadastroInput">
             <label><b>CPF:</b></label>
-            <input id="cpfCadastro" type="number" name="nome">
+            <input id="cpfCadastro" type="number" v-model="cpf" required>
         </div>
         <div class="cadastroInput">
             <label><b>EMAIL:</b></label>
-            <input id="emailCadastro" type="text" name="user" required :rules='validacaoEmail'>
+            <input id="emailCadastro" type="text" v-model="email" required :rules='validacaoEmail'>
         </div>
         <div class="cadastroInput">
             <label><b>SENHA:</b></label>
-            <input id="senha" type="password" name="senha" required :rules='validacaoSenha'>
-        </div>
-        <div class="cadastroInput">
-            <label><b>CONFIRMAR SENHA:</b></label>
-            <input id="senha" type="password" name="senha" required :rules='validacaoSenha'>
+            <input id="senha" type="password" v-model="senha" required :rules='validacaoSenha'>
         </div>
         <label><router-link to="/">Fazer login</router-link></label> 
-        <button type="submit"><b>OK</b></button>    
-    </form>
+        <v-btn class="button" @click="cadastrarUsuario()">OK</v-btn>    
+    </v-form>
 </div>
 
 </template>
@@ -42,6 +38,8 @@ export default {
   name: 'cadastroUsuario',
   data() {
     return {
+        nome: '',
+        cpf: '',
         email: '',
         senha: '',
         routes,
@@ -61,18 +59,23 @@ export default {
     cadastrarUsuarioFirestore(idUsuario) {
         if (idUsuario != null && idUsuario != "") {
             usersCollection.doc(idUsuario).set({
+                nome: this.nome,
                 email: this.email,
+                cpf: this.cpf,
                 createdAt: new Date(),
                 updatedAt: new Date()
             })
             .then(function() {
                 console.log("Usuário cadastrado no Firestore com sucesso! "); /* eslint-disable-line no-console */
+                alert("Usuário cadastrado com sucesso!")
             })
             .catch(function(error) {
                 console.log("Erro ao cadastrar usuário no Firestore: ", error); /* eslint-disable-line no-console */
+                alert("Erro ao cadastrar usuário!")
             })
         } else {
             console.log("ID do usuario indefinido ou nulo") /* eslint-disable-line no-console */
+            alert("Erro ao obter Id do usuário!")
         }
     },
     cadastrarUsuarioComEmailESenha(email, senha) {
@@ -89,15 +92,16 @@ export default {
         )
     },
 	cadastrarUsuario() {
-        if (this.validarFormularioCadastro()) {
-            this.cadastrarUsuarioComEmailESenha(this.email, this.senha)
-        } else {
-            console.log("Formulário inválido "); /* eslint-disable-line no-console */
-            // TODO alert avisando o usuario que o form esta errado
+            if (this.validarFormularioCadastro()) {
+                this.cadastrarUsuarioComEmailESenha(this.email, this.senha)
+            } else {
+                console.log("Formulário inválido "); /* eslint-disable-line no-console */
+                // TODO alert avisando o usuario que o form esta errado
+            }
         }
     }
   }
-}
+
 </script>
 
 <style scoped>
@@ -129,7 +133,7 @@ header img{
     font-family: 'Quicksand', sans-serif;
 }
 
-.formCadastro button{
+.formCadastro .button{
     background-color: #f4eded;
     color: #ef7b45;
     font-size: 14px;
@@ -143,9 +147,10 @@ header img{
     cursor: pointer;
 }
 
-.formCadastro button:hover{
-    background-color: #ef7b45;
+.formCadastro .button:hover{
+    background-color:#ef7b45 !important;
     color: #f4eded;
+    cursor: pointer;
 }
 
 .formCadastro label a{
@@ -178,9 +183,6 @@ input{
     -webkit-text-fill-color: #0e2323;
 }
 
-input:visited{
-    background-color: #f4eded;
-}
 
 @media (max-width: 576px) {
     /* header img{

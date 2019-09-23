@@ -3,18 +3,18 @@
     <header>
         <img src="../assets/images/logo.png">
     </header>
-    <form id="formLogin" class="formLogin">
+    <v-form ref="form" id="formLogin" class="formLogin">
         <div class="loginInput">
             <label><b>EMAIL:</b></label>
-            <input id="emailLogin" type="text" name="user" required :rules='validacaoEmail'>
+            <input id="emailLogin" type="text" name="user" v-model="email" required :rules='validacaoEmail'>
         </div>
         <div class="loginInput">
             <label><b>SENHA:</b></label>
-            <input id="senha" type="password" name="senha" required :rules='validacaoSenha'>
+            <input id="senha" type="password" name="senha" v-model="senha" required :rules='validacaoSenha'>
         </div>
         <label><router-link to="/cadastro">Cadastre-se</router-link></label> 
-        <button type="submit"><b>Login</b></button>    
-    </form>
+        <v-btn class="button" @click="realizarLogin()">Login</v-btn>    
+    </v-form>
 </div>
 </template>
 
@@ -89,7 +89,7 @@ header img{
     font-family: 'Quicksand', sans-serif;
 }
 
-.formLogin button{
+.formLogin .button{
     background-color: #f4eded;
     color: #ef7b45;
     font-size: 14px;
@@ -103,19 +103,16 @@ header img{
     cursor: pointer;
 }
 
-.formLogin button:hover{
-    background-color: #ef7b45;
+.formLogin .button:hover{
+    background-color:#ef7b45 !important;
     color: #f4eded;
+    cursor: pointer;
 }
 
 .formLogin label a{
     color: #f4eded;
     text-decoration: none;
     font-size: 14px;
-}
-
-.formLogin label a:hover{
-    color: #ef7b45;
 }
 
 .loginInput{
