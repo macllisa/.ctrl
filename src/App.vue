@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-app class="grey darken-4">
         <v-content>
             <router-view></router-view>
         </v-content>
@@ -10,6 +10,7 @@
 import { routes } from './routes';
 
 export default {
+    name:'App',
     data(){
         return{
             routes
