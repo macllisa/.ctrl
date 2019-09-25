@@ -13,7 +13,7 @@
             <input id="senha" type="password" name="senha" v-model="senha" required :rules='validacaoSenha'>
         </div>
         <label><router-link to="/cadastro">Cadastre-se</router-link></label> 
-        <v-btn class="button" @click="realizarLogin()">Login</v-btn>    
+        <v-btn class="button title font-weight-bold" @click="realizarLogin()">Login</v-btn>    
     </v-form>
 </div>
 </template>

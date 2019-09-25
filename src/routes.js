@@ -1,5 +1,5 @@
 import Cadastro from './components/CadastroUsuario.vue';
-import Login from './components/LoginUsuario.vue';
+import Login from './components/Login.vue';
 
 export const routes = [
     { path: '/', component: Login},
