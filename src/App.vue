@@ -1,6 +1,6 @@
 <template>
-    <v-app class="grey darken-4">
-        <v-content>
+    <v-app class="background">
+        <v-content> 
             <router-view></router-view>
         </v-content>
     </v-app>
@@ -20,6 +20,9 @@ export default {
 </script>
 
 <style scoped>
+.background{
+    background-color:#220a36 !important;
+}
 
 </style>
 
