@@ -4,7 +4,12 @@
             <v-col class="pa-0"></v-col>
             <v-col>
                 <v-form ref="form">
-                    <v-img src="../assets/images/logo.png" width='170px' class="my-7 mx-auto"/>
+                    <router-link to="/">
+                        <v-btn text icon dark>
+                            <v-icon small>mdi-arrow-left</v-icon>
+                        </v-btn>
+                    </router-link>
+                    <v-img src="../assets/images/logo.png" width='170px' class="mb-5 mt-0 mx-auto"/>
                     <v-form>
                         <v-text-field 
                             id="nome" 
@@ -61,8 +66,8 @@
                             @click="cadastrarUsuario()" 
                             small 
                             outlined 
-                            color="orange accent-2" 
-                            class="ml-auto mt-3">
+                            color="#ef7b45" 
+                            class="ml-auto mt-5">
                             <span>Concluir Cadastro</span>
                         </v-btn>
                     </v-row>

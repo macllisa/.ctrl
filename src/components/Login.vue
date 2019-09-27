@@ -30,7 +30,8 @@
                             label="Senha"/>
                     </v-form>
                     <v-row class="px-3">
-                        <v-btn @click="realizarLogin()" small outlined color="orange accent-2" class="ml-auto">
+                        <router-link class="font-weight-light body-2" to="/cadastro">Cadastre-se</router-link>
+                        <v-btn @click="realizarLogin()" small outlined color="#ef7b45" class="ml-auto">
                             <span>Login</span>
                         </v-btn>
                     </v-row>
@@ -93,6 +94,7 @@ export default {
 <style scoped>
 a{  
     text-decoration: none;
+    color: white !important;
 }
 
 a:hover{
