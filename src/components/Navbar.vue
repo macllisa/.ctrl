@@ -1,17 +1,20 @@
 <template>
     <nav>
-        <v-toolbar flat app class="deep-purple darken-4">
-             <v-app-bar-nav-icon class="white--text"></v-app-bar-nav-icon>
-            <v-toolbar-title class="pl-0 mx-auto">
-                <v-img src="../assets/images/logo.png" width="70px"/>
-            </v-toolbar-title>
+        <v-toolbar flat app class="red">
+             <v-app-bar-nav-icon class="orange--text" @click="drawer = !drawer"></v-app-bar-nav-icon>
         </v-toolbar>
+        <v-navigation-drawer v-model='drawer' app>
+            <v-img src="../assets/images/logo.png" width="100px"/>
+        </v-navigation-drawer>
     </nav>
 </template>
-
 <script>
 export default {
-    
+    data(){
+        return{
+            drawer: false
+        }
+    }
 }
 </script>
 
