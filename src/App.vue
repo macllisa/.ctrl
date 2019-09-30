@@ -21,7 +21,8 @@ export default {
 
 <style scoped>
 .background{
-    background-color:#220a36 !important;
+    /* background-color:#220a36 !important; */
+    background-color: white !important;
 }
 
 </style>

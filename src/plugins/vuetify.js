@@ -1,13 +1,17 @@
 import Vue from 'vue';
 import Vuetify, {
   VBtn,
-  VTextField
+  VTextField,
+  VIcon,
+  VAppBar,
 } from 'vuetify/lib';
 
 Vue.use(Vuetify, {
   components: {
     VBtn,
-    VTextField
+    VTextField,
+    VIcon,
+    VAppBar
   }
 });
 
