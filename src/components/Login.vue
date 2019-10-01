@@ -1,11 +1,10 @@
 <template>
     <v-container fluid>
         <v-row align="center">
-            <v-col class="pa-0"></v-col>
             <v-col>
-                <v-form ref="form">
+                <v-form class="form ma-auto" ref="form">
                     <v-img src="../assets/images/logo.png" width='170px' class="my-12 mx-auto"/>
-                    <v-form>
+                    <v-form class="pt-6">
                         <v-text-field 
                             id="emailLogin" 
                             type="text" 
@@ -37,7 +36,6 @@
                     </v-row>
                 </v-form>    
             </v-col>
-            <v-col class="pa-0"></v-col>
         </v-row>
     </v-container>
 </template>
@@ -92,6 +90,15 @@ export default {
 </script>
 
 <style scoped>
+.container{
+    height: 100%;
+    background-color: #220a36;
+}
+
+.form{
+    width: 60%;
+}
+
 a{  
     text-decoration: none;
     color: white !important;
@@ -101,4 +108,45 @@ a:hover{
     color: #ef7b45 !important;
 }
 
+@media (max-width: 575px) {
+    .form{
+         width: 80%;
+    }
+}
+
+@media (min-width: 576px) {
+    .form{
+         width: 80%;
+    }
+}
+
+@media (min-width: 768px) {
+    .form{
+        width: 60%;
+    }
+}
+
+@media (min-width: 992px) {
+    .form{
+        width: 50%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .form{
+        width: 50%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .form{
+        width: 40%;
+    }
+}
+
+@media (min-width: 1920px) {
+    .form{
+        width: 40%;
+    }
+}
 </style>
