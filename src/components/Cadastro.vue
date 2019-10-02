@@ -159,7 +159,7 @@ export default {
 <style scoped>
 .container{
     height: 100%;
-    background-color: #220a36;
+    background-color: #0a0a0a;
 }
 
 .form{
