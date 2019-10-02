@@ -1,7 +1,21 @@
 <template>
-    <div>
-        oi
-    </div>    
+    <v-card elevation="1" class="white listaPedidos ma-6">
+        <v-row class="pa-6">
+            <v-card-title class="title">PEDIDOS:</v-card-title>
+            <v-spacer></v-spacer>
+            <v-card-actions>
+                <v-btn small depressed color="orange white--text">Novo Pedido</v-btn>
+            </v-card-actions>
+        </v-row>
+        <v-expansion-panels accordion class="px-4 pb-4">
+            <v-expansion-panel v-for="(item,i) in 10" :key="i">
+                <v-expansion-panel-header>Pedido #000001</v-expansion-panel-header>
+                <v-expansion-panel-content>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit laudantium consequatur necessitatibus tempora iure corporis itaque voluptate. Quod explicabo iusto debitis, consequatur inventore, corporis ex eligendi tenetur a dolorem iure.
+                </v-expansion-panel-content>
+            </v-expansion-panel>
+        </v-expansion-panels>
+    </v-card>
 </template>
 
 <script>
@@ -14,3 +28,7 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+
+</style>
