@@ -1,6 +1,15 @@
 <template>
 <div class="dashboard">
-    <v-navigation-drawer app permanent class="nav" color="#0a0a0a">
+    <v-app-bar dark color="#0a0a0a" class="px-2 hidden-lg-and-up">
+        <v-app-bar-nav-icon @click=" drawer = !drawer"></v-app-bar-nav-icon>
+        <v-spacer></v-spacer>
+        <v-toolbar-title class="pl-0">
+            <v-img src="../assets/images/logo.png" width="70px"/>
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-app-bar-nav-icon color="#0a0a0a"></v-app-bar-nav-icon>
+    </v-app-bar>
+    <v-navigation-drawer v-model="drawer" app class="nav" color="#0a0a0a">
       <v-list-item dark class="pl-10 mt-8">
         <v-list-item-content>
           <v-list-item-title class="title mb-6">
