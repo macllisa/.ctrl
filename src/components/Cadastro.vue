@@ -5,7 +5,7 @@
                 <v-card color="#0a0a0a" class="px-8 pt-1 pb-12 form mx-auto">
                 <v-form ref="form">
                     <router-link to="/">
-                        <v-btn text icon dark class="mt-6">
+                        <v-btn text icon dark class="mt-6 mb-0">
                             <v-icon small>mdi-arrow-left</v-icon>
                         </v-btn>
                     </router-link>
@@ -181,42 +181,49 @@ a:hover{
 @media (max-width: 575px) {
     .form{
          width: 95%;
+         margin-top: 7%;
     }
 }
 
 @media (min-width: 576px) {
     .form{
          width: 85%;
+         margin-top: 5%;
     }
 }
 
 @media (min-width: 768px) {
     .form{
         width: 60%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 992px) {
     .form{
         width: 50%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 1200px) {
     .form{
         width: 50%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 1280px) {
     .form{
         width: 40%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 1920px) {
     .form{
         width: 40%;
+        margin-top: 5%;
     }
 }
 </style>

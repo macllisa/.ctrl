@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="1" class="white listaPedidos ma-4">
-    <v-card-title class="subtitle-1 ml-1 pt-6 py-2">NOVO PEDIDO</v-card-title>
+    <v-card-title class="subtitle-1 font-weight-bold ml-1 pt-6 py-2">NOVO PEDIDO</v-card-title>
     <v-row class="mx-3 mt-3">
       <v-text-field
         class="px-1"
@@ -44,7 +44,7 @@
           <div class="flex-grow-1"></div>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
-              <v-btn small color="primary" depressed dark class="px-2 mb-2" v-on="on">Adicionar Produto</v-btn>
+              <v-btn small color="grey lighten-1" dark depressed class="px-2 mb-2" v-on="on">Adicionar Produto</v-btn>
             </template>
             <v-card class="pa-4">
               <v-card-title>
@@ -89,7 +89,7 @@
     </v-data-table>
     <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn small color="primary" dark class="ma-2" @click="salvarPedido()">Finalizar pedido</v-btn>
+        <v-btn small color="primary" dark class="mx-2 mb-3 mt-5" @click="salvarPedido()">Finalizar pedido</v-btn>
     </v-card-actions>
   </v-card>
 </template>

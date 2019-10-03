@@ -121,35 +121,35 @@ a:hover{
 
 @media (min-width: 576px) {
     .form{
-         width: 95%;
+         width: 85%;
          margin-top: 5%;
     }
 }
 
 @media (min-width: 768px) {
     .form{
-        width: 80%;
+        width: 60%;
         margin-top: 2%;
     }
 }
 
 @media (min-width: 992px) {
     .form{
-        width: 70%;
-        margin-top: 2%;
+        width: 50%;
+         margin-top: 2%;
     }
 }
 
 @media (min-width: 1200px) {
     .form{
-        width: 60%;
-        margin-top: 2%;
+        width: 50%;
+         margin-top: 2%;
     }
 }
 
 @media (min-width: 1280px) {
     .form{
-        width: 50%;
+        width: 40%;
         margin-top: 2%;
     }
 }
@@ -157,7 +157,7 @@ a:hover{
 @media (min-width: 1920px) {
     .form{
         width: 40%;
-        margin-top: 5%;
+         margin-top: 5%;
     }
 }
 </style>
