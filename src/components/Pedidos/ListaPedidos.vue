@@ -4,7 +4,7 @@
             <v-card-title class="title">PEDIDOS:</v-card-title>
             <v-spacer></v-spacer>
             <v-card-actions class="pr-3">
-                <v-btn small depressed dark color="#ef7b45" router to="/novoPedido">Novo Pedido</v-btn>
+                <v-btn small depressed dark color="primary" router to="/novoPedido">Novo Pedido</v-btn>
             </v-card-actions>
         </v-row>
         <v-expansion-panels accordion class="px-4 pb-4">

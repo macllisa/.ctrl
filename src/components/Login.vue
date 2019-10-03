@@ -14,7 +14,7 @@
                             :rules='validacaoEmail' 
                             dark 
                             outlined 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Email"/>
                         <v-text-field 
                             id="senha" 
@@ -25,12 +25,12 @@
                             :rules='validacaoSenha' 
                             dark 
                             outlined 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Senha"/>
                     </v-form>
                     <v-row class="px-3">
                         <router-link class="font-weight-light body-2" to="/cadastro">Cadastre-se</router-link>
-                        <v-btn @click="realizarLogin()" small outlined color="#ef7b45" class="ml-auto">
+                        <v-btn @click="realizarLogin()" small outlined color="primary" class="ml-auto">
                             <span>Login</span>
                         </v-btn>
                     </v-row>
@@ -105,7 +105,7 @@ a{
 }
 
 a:hover{
-    color: #ef7b45 !important;
+    color: primary !important;
 }
 
 @media (max-width: 575px) {

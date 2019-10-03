@@ -17,7 +17,7 @@
                             v-model="nome" 
                             required  
                             dark 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Nome"/>
                         <v-text-field 
                             id="cpf" 
@@ -26,7 +26,7 @@
                             v-model="cpf" 
                             required  
                             dark 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="CPF"/>
                         <v-select
                             id="empresa"
@@ -34,7 +34,7 @@
                             v-model="empresa"
                             required
                             dark
-                            color="#ef7b45"
+                            color="primary"
                             label="Selecione a empresa"
                             :items="empresas"
                         ></v-select>
@@ -45,7 +45,7 @@
                             v-model="email" 
                             required  
                             dark 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Email"
                             :rules='validacaoEmail'/>
                         <v-text-field 
@@ -55,8 +55,8 @@
                             v-model="senha" 
                             required  
                             dark 
-                            color="#ef7b45" 
-                            item-color="#ef7b45"
+                            color="primary" 
+                            item-color="primary"
                             label="Senha"
                             :rules='validacaoSenha'/>
                     </v-form>
@@ -65,7 +65,7 @@
                             @click="cadastrarUsuario()" 
                             small 
                             outlined 
-                            color="#ef7b45" 
+                            color="primary" 
                             class="ml-auto mt-5">
                             <span>Concluir Cadastro</span>
                         </v-btn>
@@ -171,7 +171,7 @@ a{
 }
 
 a:hover{
-    color: #ef7b45 !important;
+    color: primary !important;
 }
 
 @media (max-width: 575px) {
