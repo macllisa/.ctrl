@@ -1,13 +1,13 @@
 <template>
     <v-card elevation="1" class="white listaPedidos ma-4">
-        <v-row class="pa-6">
+        <v-row class="pa-4">
             <v-card-title class="title">PEDIDOS:</v-card-title>
             <v-spacer></v-spacer>
-            <v-card-actions>
-                <v-btn small depressed dark color="#ef7b45">Novo Pedido</v-btn>
+            <v-card-actions class="pr-3">
+                <v-btn small depressed dark color="#ef7b45" router to="/novoPedido">Novo Pedido</v-btn>
             </v-card-actions>
         </v-row>
-        <v-expansion-panels accordion class="px-4 pb-6">
+        <v-expansion-panels accordion class="px-4 pb-4">
             <v-expansion-panel v-for="(item,i) in 10" :key="i">
                 <v-expansion-panel-header>Pedido #000001</v-expansion-panel-header>
                 <v-expansion-panel-content>
