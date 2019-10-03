@@ -181,14 +181,14 @@ a:hover{
 @media (max-width: 575px) {
     .form{
          width: 95%;
-         margin-top: 7%;
+         margin-top:0%;
     }
 }
 
 @media (min-width: 576px) {
     .form{
          width: 85%;
-         margin-top: 5%;
+         margin-top: 0%;
     }
 }
 
