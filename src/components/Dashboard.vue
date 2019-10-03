@@ -51,7 +51,7 @@
 export default {
     data(){
         return{
-            drawer: false,
+            drawer: true,
             username: 'Maria Clara Santos',
             items: [
                 { title: 'Pedidos', icon: 'mdi-clipboard-list-outline', link: '/pedidos'},
