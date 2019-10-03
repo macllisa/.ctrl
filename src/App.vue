@@ -1,6 +1,6 @@
 <template>
     <v-app class="background">
-        <v-content> 
+        <v-content>
             <router-view></router-view>
         </v-content>
     </v-app>
@@ -21,7 +21,7 @@ export default {
 
 <style scoped>
 .background{
-    background-color:#220a36 !important;
+    background-color: #ececed !important;
 }
 
 </style>

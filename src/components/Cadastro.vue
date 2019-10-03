@@ -1,11 +1,11 @@
 <template>
     <v-container fluid>
         <v-row align="center">
-            <v-col class="pa-0"></v-col>
             <v-col>
+                <v-card color="#0a0a0a" class="px-8 pt-1 pb-12 form mx-auto">
                 <v-form ref="form">
                     <router-link to="/">
-                        <v-btn text icon dark>
+                        <v-btn text icon dark class="mt-6 mb-0">
                             <v-icon small>mdi-arrow-left</v-icon>
                         </v-btn>
                     </router-link>
@@ -18,7 +18,7 @@
                             v-model="nome" 
                             required  
                             dark 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Nome"/>
                         <v-text-field 
                             id="cpf" 
@@ -27,7 +27,7 @@
                             v-model="cpf" 
                             required  
                             dark 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="CPF"/>
                         <v-select
                             id="empresa"
@@ -35,7 +35,7 @@
                             v-model="empresa"
                             required
                             dark
-                            color="#ef7b45"
+                            color="primary"
                             label="Selecione a empresa"
                             :items="empresas"
                         ></v-select>
@@ -46,7 +46,7 @@
                             v-model="email" 
                             required  
                             dark 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Email"
                             :rules='validacaoEmail'/>
                         <v-text-field 
@@ -56,8 +56,8 @@
                             v-model="senha" 
                             required  
                             dark 
-                            color="#ef7b45" 
-                            item-color="#ef7b45"
+                            color="primary" 
+                            item-color="primary"
                             label="Senha"
                             :rules='validacaoSenha'/>
                     </v-form>
@@ -66,14 +66,14 @@
                             @click="cadastrarUsuario()" 
                             small 
                             outlined 
-                            color="#ef7b45" 
+                            color="primary" 
                             class="ml-auto mt-5">
                             <span>Concluir Cadastro</span>
                         </v-btn>
                     </v-row>
-                </v-form>    
+                </v-form>  
+                </v-card>  
             </v-col>
-            <v-col class="pa-0"></v-col>
         </v-row>
     </v-container>
 </template>
@@ -159,12 +159,71 @@ export default {
 </script>
 
 <style scoped>
+.container{
+    height: 100%;
+    background-image: url("../assets/images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.form{
+    width: 60%;
+}
+
 a{  
     text-decoration: none;
 }
 
 a:hover{
-    color: #ef7b45 !important;
+    color: primary !important;
 }
 
+@media (max-width: 575px) {
+    .form{
+         width: 95%;
+         margin-top:0%;
+    }
+}
+
+@media (min-width: 576px) {
+    .form{
+         width: 85%;
+         margin-top: 0%;
+    }
+}
+
+@media (min-width: 768px) {
+    .form{
+        width: 60%;
+        margin-top: 2%;
+    }
+}
+
+@media (min-width: 992px) {
+    .form{
+        width: 50%;
+        margin-top: 2%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .form{
+        width: 50%;
+        margin-top: 2%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .form{
+        width: 40%;
+        margin-top: 2%;
+    }
+}
+
+@media (min-width: 1920px) {
+    .form{
+        width: 40%;
+        margin-top: 5%;
+    }
+}
 </style>

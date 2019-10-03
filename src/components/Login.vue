@@ -1,11 +1,11 @@
 <template>
     <v-container fluid>
         <v-row align="center">
-            <v-col class="pa-0"></v-col>
             <v-col>
+                <v-card color="#0a0a0a" class="px-8 pt-1 pb-12 form mx-auto">
                 <v-form ref="form">
                     <v-img src="../assets/images/logo.png" width='170px' class="my-12 mx-auto"/>
-                    <v-form>
+                    <v-form class="pt-6">
                         <v-text-field 
                             id="emailLogin" 
                             type="text" 
@@ -15,7 +15,7 @@
                             :rules='validacaoEmail' 
                             dark 
                             outlined 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Email"/>
                         <v-text-field 
                             id="senha" 
@@ -26,18 +26,18 @@
                             :rules='validacaoSenha' 
                             dark 
                             outlined 
-                            color="#ef7b45" 
+                            color="primary" 
                             label="Senha"/>
                     </v-form>
                     <v-row class="px-3">
                         <router-link class="font-weight-light body-2" to="/cadastro">Cadastre-se</router-link>
-                        <v-btn @click="realizarLogin()" small outlined color="#ef7b45" class="ml-auto">
+                        <v-btn @click="realizarLogin()" small outlined color="primary" class="ml-auto">
                             <span>Login</span>
                         </v-btn>
                     </v-row>
-                </v-form>    
+                </v-form>  
+            </v-card>      
             </v-col>
-            <v-col class="pa-0"></v-col>
         </v-row>
     </v-container>
 </template>
@@ -92,13 +92,72 @@ export default {
 </script>
 
 <style scoped>
+.container{
+    height: 100%;
+    background-image: url("../assets/images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.form{
+    width: 60%;
+}
+
 a{  
     text-decoration: none;
     color: white !important;
 }
 
 a:hover{
-    color: #ef7b45 !important;
+    color: primary !important;
 }
 
+@media (max-width: 575px) {
+    .form{
+         width: 95%;
+         margin-top: 7%;
+    }
+}
+
+@media (min-width: 576px) {
+    .form{
+         width: 85%;
+         margin-top: 5%;
+    }
+}
+
+@media (min-width: 768px) {
+    .form{
+        width: 60%;
+        margin-top: 2%;
+    }
+}
+
+@media (min-width: 992px) {
+    .form{
+        width: 50%;
+         margin-top: 2%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .form{
+        width: 50%;
+         margin-top: 2%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .form{
+        width: 40%;
+        margin-top: 2%;
+    }
+}
+
+@media (min-width: 1920px) {
+    .form{
+        width: 40%;
+         margin-top: 5%;
+    }
+}
 </style>
