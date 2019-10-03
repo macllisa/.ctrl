@@ -8,7 +8,7 @@
             </v-card-actions>
         </v-row>
         <v-expansion-panels accordion class="px-4 pb-4">
-            <v-expansion-panel v-for="(item,i) in 10" :key="i">
+            <v-expansion-panel v-for="pedido in pedidos" :key="pedido">
                 <v-expansion-panel-header>Pedido #000001</v-expansion-panel-header>
                 <v-expansion-panel-content>
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit laudantium consequatur necessitatibus tempora iure corporis itaque voluptate. Quod explicabo iusto debitis, consequatur inventore, corporis ex eligendi tenetur a dolorem iure.
@@ -23,12 +23,8 @@
 export default {
     data(){
         return{
-
+            pedidos: []
         }
     }
 }
 </script>
-
-<style scoped>
-
-</style>

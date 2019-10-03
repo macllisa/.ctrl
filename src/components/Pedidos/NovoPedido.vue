@@ -29,7 +29,7 @@
         id="dataChegPed"
         type="text"
         name="dataChegPed"
-        v-model="dataPed"
+        v-model="dataChegPed"
         required
         outlined
         color="primary"
@@ -89,7 +89,7 @@
     </v-data-table>
     <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn small color="primary" dark class="ma-2" v-on="on">Finalizar pedido</v-btn>
+        <v-btn small color="primary" dark class="ma-2" @click="salvarPedido()">Finalizar pedido</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -98,6 +98,9 @@
 export default {
   data: () => ({
     dialog: false,
+    codPed: "",
+    dataPed: "",
+    dataChegPed: "",
     headers: [
       {
         text: "Código",
@@ -137,11 +140,7 @@ export default {
     }
   },
 
-  created() {
-    this.initialize();
-  },
-
-  methods: {
+  methods: {  
     editItem(item) {
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -169,6 +168,10 @@ export default {
         this.products.push(this.editedItem);
       }
       this.close();
+    },
+
+    salvarPedido(){
+
     }
   }
 };

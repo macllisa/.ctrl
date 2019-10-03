@@ -2,7 +2,8 @@
     <v-container fluid>
         <v-row align="center">
             <v-col>
-                <v-form class="form ma-auto" ref="form">
+                <v-card color="#0a0a0a" class="px-8 pt-1 pb-12 form mx-auto">
+                <v-form ref="form">
                     <v-img src="../assets/images/logo.png" width='170px' class="my-12 mx-auto"/>
                     <v-form class="pt-6">
                         <v-text-field 
@@ -34,7 +35,8 @@
                             <span>Login</span>
                         </v-btn>
                     </v-row>
-                </v-form>    
+                </v-form>  
+            </v-card>      
             </v-col>
         </v-row>
     </v-container>
@@ -92,7 +94,9 @@ export default {
 <style scoped>
 .container{
     height: 100%;
-    background-color: #0a0a0a;
+    background-image: url("../assets/images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .form{
@@ -110,43 +114,50 @@ a:hover{
 
 @media (max-width: 575px) {
     .form{
-         width: 80%;
+         width: 95%;
+         margin-top: 7%;
     }
 }
 
 @media (min-width: 576px) {
     .form{
-         width: 80%;
+         width: 95%;
+         margin-top: 5%;
     }
 }
 
 @media (min-width: 768px) {
     .form{
-        width: 60%;
+        width: 80%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 992px) {
     .form{
-        width: 50%;
+        width: 70%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 1200px) {
     .form{
-        width: 50%;
+        width: 60%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 1280px) {
     .form{
-        width: 40%;
+        width: 50%;
+        margin-top: 2%;
     }
 }
 
 @media (min-width: 1920px) {
     .form{
         width: 40%;
+        margin-top: 5%;
     }
 }
 </style>

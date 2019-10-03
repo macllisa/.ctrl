@@ -2,9 +2,10 @@
     <v-container fluid>
         <v-row align="center">
             <v-col>
-                <v-form class="form ma-auto" ref="form">
+                <v-card color="#0a0a0a" class="px-8 pt-1 pb-12 form mx-auto">
+                <v-form ref="form">
                     <router-link to="/">
-                        <v-btn text icon dark>
+                        <v-btn text icon dark class="mt-6">
                             <v-icon small>mdi-arrow-left</v-icon>
                         </v-btn>
                     </router-link>
@@ -70,7 +71,8 @@
                             <span>Concluir Cadastro</span>
                         </v-btn>
                     </v-row>
-                </v-form>    
+                </v-form>  
+                </v-card>  
             </v-col>
         </v-row>
     </v-container>
@@ -159,7 +161,9 @@ export default {
 <style scoped>
 .container{
     height: 100%;
-    background-color: #0a0a0a;
+    background-image: url("../assets/images/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .form{
@@ -176,7 +180,7 @@ a:hover{
 
 @media (max-width: 575px) {
     .form{
-         width: 85%;
+         width: 95%;
     }
 }
 
