@@ -11,8 +11,8 @@ import { routes } from './routes';
 
 export default {
     name:'App',
-    data(){
-        return{
+    data() {
+        return {
             routes
         }
     }

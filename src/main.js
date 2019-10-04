@@ -5,24 +5,18 @@ import vuetify from './plugins/vuetify';
 import { routes } from './routes';
 import VueRouter from 'vue-router';
 import firebase from 'firebase';
-import { firestorePlugin } from 'vuefire'
 
 Vue.config.productionTip = false
 Vue.use(vuetify)
-Vue.use(firestorePlugin);
 
 Vue.use(VueRouter)
+
+let app = '';
 
 const router = new VueRouter({ 
   routes, 
   mode: 'history'
 });
-
-new Vue({
-  router,
-  vuetify,
-  render: h => h(App)
-}).$mount('#app')
 
 router.beforeEach((to, from, next) => {
   const currentUser = firebase.auth().currentUser;
@@ -34,7 +28,15 @@ router.beforeEach((to, from, next) => {
   else next();
 })
 
-
+firebase.auth().onAuthStateChanged(() => {
+  if(!app) {
+      app = new Vue({
+          router,
+          vuetify,
+          render: h => h(App)
+      }).$mount('#app');
+  }
+});
 
 
 

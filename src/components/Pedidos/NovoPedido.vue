@@ -96,6 +96,7 @@
 
 <script>
 import { pedidosCollection } from '../../firebase.js';
+import { produtosCollection } from '../../firebase.js';
 
 export default {
   data: () => ({
@@ -182,12 +183,16 @@ export default {
       })
       .then(function() {
         alert('Pedido cadastrado com sucesso!');
+        this.cadastrarProdutosDoPedido();
         console.log('Pedido cadastrado com sucesso.'); /* eslint-disable-line no-console */
       })
       .catch(function(error) {
         alert('Erro ao cadastrar pedido! Ver log para mais informacoes');
         console.log('Erro: ' + error);/* eslint-disable-line no-console */
       })
+    },
+    cadastrarProdutosDoPedido() {
+      produtosCollection.add()
     }
   }
 };
