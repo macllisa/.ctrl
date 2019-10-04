@@ -183,16 +183,18 @@ export default {
           produtos: this.products,
           createdAt: new Date(),
           updatedAt: new Date()
-        })
+        }, { merge:true })
       }
       console.log('userLogado' + userLogado) /* eslint-disable-line no-console */
     },
 
     salvarPedido() {
       pedidosCollection.doc(this.codigoPedido).set({
+        codigoPedido: this.codigoPedido,
         dataEmissaoPedido: this.dataPedido,
         dataRecebimentoPedido: this.dataRecebimentoPedido,
         produtos: this.getCodigosProdutosASeremCadastrados(),
+        usuario: firebase.auth().currentUser.uid,
         createdAt: new Date(),
         updatedAt: new Date()
       }).then(

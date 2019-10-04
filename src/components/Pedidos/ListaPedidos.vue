@@ -8,10 +8,10 @@
             </v-card-actions>
         </v-row>
         <v-expansion-panels accordion class="px-4 pb-4">
-            <v-expansion-panel v-for="pedido in pedidos" :key="pedido">
-                <v-expansion-panel-header>Pedido: {{ pedido.codigo }} | Data: {{ pedido.datPed }}</v-expansion-panel-header>
-                <v-expansion-panel-content v-for="produto in produtos" :key="produto">
-                    {{ codProd }} | {{ descProd }} | {{ qtdeProd }} | {{ precProd }}
+            <v-expansion-panel v-for="(pedido, idx) in pedidos" :key="idx">
+                <v-expansion-panel-header>Pedido: {{ pedido.codigoPedido }} | Data: {{ pedido.dataEmissaoPedido }}</v-expansion-panel-header>
+                <v-expansion-panel-content v-for="(produto, idx) in produtos" :key="idx">
+                    {{ produto.codigoProduto }} | {{ produto.descricaoProduto }} | {{ produto.qtdeProduto }} | {{ produto.precoProdoto }}
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -19,12 +19,29 @@
 </template>
 
 <script>
+import firebase from 'firebase';
+import { pedidosCollection } from '../../firebase.js';
+import { produtosCollection } from '../../firebase.js';
 
 export default {
-    data(){
-        return{
-            pedidos: []
+    data() {
+        return {
+            pedidos: [],
+            produtos: []
         }
+    },
+    created() {
+        this.getPedidos();
+    },
+    methods: {
+        getPedidos() {
+            var pedidos = pedidosCollection;
+            var produtos = produtosCollection.doc(firebase.auth().currentUser.uid);
+            this.pedidos = pedidos;
+            this.produtos = produtos.produtos;
+            console.log(pedidos) /* eslint-disable-line no-console */
+            console.log(produtos) /* eslint-disable-line no-console */
+        }   
     }
-}
+};
 </script>
