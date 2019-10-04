@@ -5,9 +5,11 @@ import vuetify from './plugins/vuetify';
 import { routes } from './routes';
 import VueRouter from 'vue-router';
 import firebase from 'firebase';
+import { firestorePlugin } from 'vuefire'
 
 Vue.config.productionTip = false
 Vue.use(vuetify)
+Vue.use(firestorePlugin);
 
 Vue.use(VueRouter)
 
