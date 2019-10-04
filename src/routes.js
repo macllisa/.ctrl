@@ -8,9 +8,11 @@ import Clientes from './components/Clientes/ListaClientes.vue'
 import Vendas from './components/Vendas/ListaVendas.vue'
 
 export const routes = [
-    { path: '/', component: Login},
+    { path: '*', redirect: '/login' },
+    { path: '/', redirect: '/login' },
+    { path: '/login', component: Login},
     { path: '/cadastro', component: Cadastro},
-    { path: '/dashboard', component: Dashboard,
+    { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } ,
         children: [
         { path: '/pedidos', component: Pedidos},
         { path: '/novoPedido', component: NovoPedido},

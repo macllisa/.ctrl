@@ -122,6 +122,7 @@ export default {
             .then(function() {
                 console.log("Usuário cadastrado no Firestore com sucesso! "); /* eslint-disable-line no-console */
                 alert("Usuário cadastrado com sucesso!")
+                this.$router.replace('/login')
             })
             .catch(function(error) {
                 console.log("Erro ao cadastrar usuário no Firestore: ", error); /* eslint-disable-line no-console */

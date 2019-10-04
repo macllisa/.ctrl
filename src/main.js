@@ -4,8 +4,7 @@ import './firebase';
 import vuetify from './plugins/vuetify';
 import { routes } from './routes';
 import VueRouter from 'vue-router';
-import Vuetify from 'vuetify';
-
+import firebase from 'firebase';
 
 Vue.config.productionTip = false
 Vue.use(vuetify)
@@ -23,6 +22,15 @@ new Vue({
   render: h => h(App)
 }).$mount('#app')
 
+router.beforeEach((to, from, next) => {
+  const currentUser = firebase.auth().currentUser;
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  console.log(currentUser + " " + requiresAuth)/* eslint-disable-line no-console */
+
+  if (requiresAuth && !currentUser) next('/login');
+  else if (!requiresAuth && currentUser) next('/dashboard');
+  else next();
+})
 
 
 

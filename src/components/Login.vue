@@ -43,8 +43,7 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-import { usersCollection } from "../firebase.js"
+import firebase from 'firebase';
 import { routes } from '../routes';
 
 export default {
@@ -71,7 +70,7 @@ export default {
         firebase.auth().signInWithEmailAndPassword(email, senha).then(
             () => {
                 console.log("Logado com sucesso "); /* eslint-disable-line no-console */
-                // TODO ROUTER REPLACE
+                this.$router.replace('/dashboard');
             },
             () => {
                 console.log("Erro ao logar"); /* eslint-disable-line no-console */
