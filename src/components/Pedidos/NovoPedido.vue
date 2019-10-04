@@ -178,6 +178,9 @@ export default {
 
     cadastrarProdutosDoPedido() {
       var userLogado = firebase.auth().currentUser.uid;
+      this.products.forEach(produto => {
+        produto.codigoPedido = this.codigoPedido;
+      });
       if (userLogado != null) {
         produtosCollection.doc(userLogado).set({
           produtos: this.products,
@@ -199,7 +202,7 @@ export default {
         updatedAt: new Date()
       }).then(
         () => {
-          this.cadastrarProdutosDoPedido();
+          this.cadastrarProdutosDoPedido(this.codigoPedido);
           alert('Pedido cadastrado com sucesso!');
           console.log('Pedido cadastrado com sucesso.'); /* eslint-disable-line no-console */
         },
