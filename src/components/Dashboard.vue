@@ -13,7 +13,7 @@
       <v-list-item dark class="pl-10 mt-8">
         <v-list-item-content>
           <v-list-item-title class="title mb-6">
-            <v-img src="../assets/images/logo.png" width="140px"/>
+            <router-link to="/dashboard"><v-img src="../assets/images/logo.png" width="140px"/></router-link>
           </v-list-item-title>
           <v-list-item-subtitle>
             Olá, {{ username }}
@@ -54,6 +54,7 @@ export default {
             drawer: true,
             username: 'Maria Clara Santos',
             items: [
+                { title: 'Dashboard', icon: 'mdi-view-dashboard-outline', link: '/dashboard'},
                 { title: 'Pedidos', icon: 'mdi-clipboard-list-outline', link: '/pedidos'},
                 { title: 'Estoque', icon: 'mdi-archive', link: '/estoque'},
                 { title: 'Clientes', icon: 'mdi-account-multiple-outline', link: '/clientes'},
