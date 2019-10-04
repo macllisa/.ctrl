@@ -12,7 +12,7 @@
             <v-expansion-panel v-for="(pedido, idx) in pedidosCompletos" :key="idx">
                 <v-expansion-panel-header>Pedido: {{ pedido.codigoPedido }} | Data: {{ pedido.dataEmissaoPedido }}</v-expansion-panel-header>
                     <v-expansion-panel-content>
-                        {{ pedido.codigoProduto }} | {{ pedido.descricaoProduto }} | {{ pedido.qtdeProduto }} | {{ pedido.precoProdoto }}
+                        {{ pedido.produtos.codigoProduto }} | {{ pedido.produtos.descricaoProduto }} | {{ pedido.produtos.qtdeProduto }} | {{ pedido.produtos.precoProdoto }}
                     </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -29,7 +29,7 @@ export default {
         return {
             pedidos: [],
             produtos: [],
-            pedidosCompletos: []
+            pedidosCompletos: {}
         }
     },
     created() {
@@ -65,20 +65,29 @@ export default {
 
             this.produtos = produtos;
             this.pedidos = pedidos;
-            setTimeout(function() { this.   setPedidosCompletos(produtos, pedidos) }.bind(this), 5000);
+            setTimeout(function() { this.setPedidosCompletos(produtos, pedidos) }.bind(this), 5000);
         },
         setPedidosCompletos(produtos, pedidos) {
             // TODO pedidos retorna um object e produtos um array - o retorno de pedidoCompleto deve ser um array
             pedidos.forEach(pedido => {
-                var novoPedido = [];
+                // var novoPedido = [];
                 var pedidoCompleto = [];
 
-                var produtos = this.produtos.filter(produto => (produto.codigoPedido == pedido.codigoPedido));
-                novoPedido = [Object.values(pedido), produtos];
-    
+                var produtosLocal = produtos.filter(produto => (produto.codigoPedido == pedido.codigoPedido));
+                var novoPedido = {
+                    codigoPedido: pedido.codigoPedido,
+                    createdAt: pedido.createdAt,
+                    dataEmissaoPedido: pedido.dataEmissaoPedido,
+                    dataRecebimentoPedido: pedido.dataRecebimentoPedido,
+                    codigosProdutosPedido: pedido.produtos,
+                    produtos: produtosLocal
+                }
                 pedidoCompleto.push(novoPedido);
-                this.pedidosCompletos.push(pedidoCompleto);
-                console.log("novop edio", novoPedido) /* eslint-disable-line no-console */
+                this.pedidosCompletos = pedidoCompleto;
+                console.log("produtos", novoPedido.produtos) /* eslint-disable-line no-console */
+                console.log("pedido", novoPedido) /* eslint-disable-line no-console */
+                // console.log("produtos", Object.values(produtos)) /* eslint-disable-line no-console */
+                // console.log("novo pedido", novoPedido) /* eslint-disable-line no-console */
             });
         }   
     }
