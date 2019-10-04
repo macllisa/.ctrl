@@ -172,48 +172,45 @@ export default {
       this.close();
     },
 
-    getCodigosProdutosASeremCadastrados() {
-      return this.products.map(produto => produto.codigoProduto);
-    },
-
-    cadastrarProdutosDoPedido() {
+    salvarProdutos() {
       var userLogado = firebase.auth().currentUser.uid;
       this.products.forEach(produto => {
-        produto.codigoPedido = this.codigoPedido;
+        var codigoProduto = produto.codigoProduto;
+        var codigoSet = codigoProduto + this.codigoPedido
+         produtosCollection.doc(userLogado).set({
+          [codigoSet]:{
+          CodProduto: produto.codigoProduto,
+          Pedido: this.codigoPedido,
+          Descricao: produto.descricaoProduto,
+          Quantidade: produto.qtdeProduto,
+          Preco : produto.precoProduto
+          }
+        },{ merge:true })
       });
-      if (userLogado != null) {
-        produtosCollection.doc(userLogado).set({
-          produtos: this.products,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }, { merge:true })
-      }
-      console.log('userLogado' + userLogado) /* eslint-disable-line no-console */
     },
 
-    salvarPedido() {
-      pedidosCollection.doc(this.codigoPedido).set({
-        codigoPedido: this.codigoPedido,
-        dataEmissaoPedido: this.dataPedido,
-        dataRecebimentoPedido: this.dataRecebimentoPedido,
-        produtos: this.getCodigosProdutosASeremCadastrados(),
-        usuario: firebase.auth().currentUser.uid,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }).then(
-        () => {
-          this.cadastrarProdutosDoPedido(this.codigoPedido);
-          alert('Pedido cadastrado com sucesso!');
-          console.log('Pedido cadastrado com sucesso.'); /* eslint-disable-line no-console */
-        },
-        (error) => {
-          alert('Erro ao cadastrar pedido! Ver log para mais informacoes');
-          console.log('Erro: ' + error);/* eslint-disable-line no-console */
-        }
-      )
+    salvarPedido(){
+      var currentUser = firebase.auth().currentUser.uid;
+      var codPedido = this.codigoPedido;
+      pedidosCollection.doc(currentUser).set({
+          [codPedido]:{ 
+          DataEmissao: this.dataPedido,
+          DataRecebimento: this.dataRecebimentoPedido
+          }
+      },{ merge: true})
+      .then(() => {
+        this.salvarProdutos()
+        alert('Pedido cadastrado com sucesso!');
+        console.log('Pedido cadastrado com sucesso.')
+      },
+      (error)=> {
+        alert('Erro ao cadastrar pedido! Ver log para mais informacoes');
+        console.log('Erro: ' + error);
+      })
     }
   }
-};
+}
+
 </script>
 
 <style scoped>
