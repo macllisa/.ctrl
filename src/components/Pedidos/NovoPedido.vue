@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import firebase from 'firebase';
 import { pedidosCollection } from '../../firebase.js';
 import { produtosCollection } from '../../firebase.js';
 
@@ -170,9 +171,23 @@ export default {
       }
       this.close();
     },
+
     getCodigosProdutosASeremCadastrados() {
       return this.products.map(produto => produto.codigoProduto);
     },
+
+    cadastrarProdutosDoPedido() {
+      var userLogado = firebase.auth().currentUser.uid;
+      if (userLogado != null) {
+        produtosCollection.doc(userLogado).set({
+          produtos: this.products,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+      }
+      console.log('userLogado' + userLogado) /* eslint-disable-line no-console */
+    },
+
     salvarPedido() {
       pedidosCollection.doc(this.codigoPedido).set({
         dataEmissaoPedido: this.dataPedido,
@@ -180,19 +195,17 @@ export default {
         produtos: this.getCodigosProdutosASeremCadastrados(),
         createdAt: new Date(),
         updatedAt: new Date()
-      })
-      .then(function() {
-        alert('Pedido cadastrado com sucesso!');
-        this.cadastrarProdutosDoPedido();
-        console.log('Pedido cadastrado com sucesso.'); /* eslint-disable-line no-console */
-      })
-      .catch(function(error) {
-        alert('Erro ao cadastrar pedido! Ver log para mais informacoes');
-        console.log('Erro: ' + error);/* eslint-disable-line no-console */
-      })
-    },
-    cadastrarProdutosDoPedido() {
-      produtosCollection.add()
+      }).then(
+        () => {
+          this.cadastrarProdutosDoPedido();
+          alert('Pedido cadastrado com sucesso!');
+          console.log('Pedido cadastrado com sucesso.'); /* eslint-disable-line no-console */
+        },
+        (error) => {
+          alert('Erro ao cadastrar pedido! Ver log para mais informacoes');
+          console.log('Erro: ' + error);/* eslint-disable-line no-console */
+        }
+      )
     }
   }
 };
