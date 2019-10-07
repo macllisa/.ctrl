@@ -13,17 +13,24 @@
         color="primary"
         label="Código Pedido"
       />
-      <v-text-field
-        class="px-1"
-        id="dataPedidoido"
-        type="text"
-        name="dataPedido"
-        v-model="dataPedido"
-        required
-        outlined
-        color="primary"
-        label="Data Emissão"
-      />
+      <v-dialog ref="dialog" class="px-1" v-model="modal" :return-value.sync="dataPedido">
+        <template v-slot:activator="{ on }">
+          <v-text-field
+            v-model="dataPedido"
+            label="Data emissão"
+            outlined
+            readonly
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker v-model="dataPedido" :first-day-of-week="0" locale="pt-BR" scrollable>
+          <div class="flex-grow-1"></div>
+          <v-btn text color="grey darken-1" @click="modal = false">Cancelar</v-btn>
+          <v-btn text color="primary" @click="$refs.dialog.save(dataPedido)">Ok</v-btn>
+        </v-date-picker>
+      </v-dialog>
+      
+
       <v-text-field
         class="px-1"
         id="dataRecebimentoPedido"
@@ -101,6 +108,8 @@ import { produtosCollection } from '../../firebase.js';
 
 export default {
   data: () => ({
+    modal: false,
+    dialog: false,
     codigoPedido: "",
     dataPedido: "",
     dataRecebimentoPedido: "",
