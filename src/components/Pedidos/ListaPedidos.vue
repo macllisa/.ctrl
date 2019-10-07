@@ -9,10 +9,15 @@
             </v-card-actions>
         </v-row>
         <v-expansion-panels accordion class="px-4 pb-4">
-            <v-expansion-panel v-for="(pedido, idx) in pedidosCompletos" :key="idx">
-                <v-expansion-panel-header>Pedido: {{ pedido.codigoPedido }} | Data: {{ pedido.dataEmissaoPedido }}</v-expansion-panel-header>
+            <v-expansion-panel v-for="(pedido, idx) in pedidos" :key="idx">
+                <v-expansion-panel-header>{{ pedido.id }}<v-divider vertical class="mx-4"/>{{ pedido.DataEmissao }}<v-divider vertical class="mx-4"/>{{ pedido.DataRecebimento }}</v-expansion-panel-header>
                     <v-expansion-panel-content>
-                        {{ pedido.produtos.codigoProduto }} | {{ pedido.produtos.descricaoProduto }} | {{ pedido.produtos.qtdeProduto }} | {{ pedido.produtos.precoProdoto }}
+                        <div v-for="(produto, id) in produtos" :key="id">
+                            <div v-if="produto.Pedido === pedido.id">
+                                {{produto.CodProduto}}{{produto.Descricao}}{{produto.Quantidade}}{{produto.Preco}}
+                                <v-divider/>
+                            </div>
+                        </div>
                     </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -29,67 +34,45 @@ export default {
         return {
             pedidos: [],
             produtos: [],
-            pedidosCompletos: {}
         }
     },
     created() {
-        this.getPedidos();
+        this.getDocumentPedido();
+        this.getDocumentProduto();  
     },
     methods: {
-        getPedidos() {
-            var pedidos = [];
-            var produtos = [];
-
-            pedidosCollection.where("usuario", "==", firebase.auth().currentUser.uid).get()
-            .then(function(querySnapshot) {
-                querySnapshot.forEach(function(doc) {
-                    pedidos.push(doc.data());
-                    console.log(doc.data()) /* eslint-disable-line no-console */
-                });
+        getDocumentPedido() {
+            var currentUser = firebase.auth().currentUser.uid;
+            pedidosCollection.get().then((snapshot) =>{
+                snapshot.docs.forEach(doc =>{
+                    if(doc.id === currentUser){
+                        let result = doc.data();
+                        // Attr = key
+                        for (let key in result) {
+                            let pedido = {
+                                id: key
+                            };
+ 
+                            for (let attr in result[key]) {
+                                pedido[attr] = result[key][attr];
+                            }
+                            this.pedidos.push(pedido);
+                        } 
+                    }
+                })
             })
-            .catch(function(error) {
-                console.log("Erro ao obter pedidos.", error)/* eslint-disable-line no-console */
-            });
-
-            produtosCollection.doc(firebase.auth().currentUser.uid).get()
-            .then(
-                (doc) => {
-                    console.log('Sucesso ao obter produtos.'); /* eslint-disable-line no-console */
-                    console.log(doc.data().produtos);  /* eslint-disable-line no-console */
-                    produtos.push(doc.data().produtos);
-                },
-                (error) => {
-                    console.log('Erro ao obter produtos: ' + error);/* eslint-disable-line no-console */
-                }
-            );
-
-            this.produtos = produtos;
-            this.pedidos = pedidos;
-            setTimeout(function() { this.setPedidosCompletos(produtos, pedidos) }.bind(this), 5000);
         },
-        setPedidosCompletos(produtos, pedidos) {
-            // TODO pedidos retorna um object e produtos um array - o retorno de pedidoCompleto deve ser um array
-            pedidos.forEach(pedido => {
-                // var novoPedido = [];
-                var pedidoCompleto = [];
 
-                var produtosLocal = produtos.filter(produto => (produto.codigoPedido == pedido.codigoPedido));
-                var novoPedido = {
-                    codigoPedido: pedido.codigoPedido,
-                    createdAt: pedido.createdAt,
-                    dataEmissaoPedido: pedido.dataEmissaoPedido,
-                    dataRecebimentoPedido: pedido.dataRecebimentoPedido,
-                    codigosProdutosPedido: pedido.produtos,
-                    produtos: produtosLocal
-                }
-                pedidoCompleto.push(novoPedido);
-                this.pedidosCompletos = pedidoCompleto;
-                console.log("produtos", novoPedido.produtos) /* eslint-disable-line no-console */
-                console.log("pedido", novoPedido) /* eslint-disable-line no-console */
-                // console.log("produtos", Object.values(produtos)) /* eslint-disable-line no-console */
-                // console.log("novo pedido", novoPedido) /* eslint-disable-line no-console */
-            });
-        }   
+        getDocumentProduto(){
+            var currentUser = firebase.auth().currentUser.uid;
+            produtosCollection.get().then((snapshot) =>{
+                snapshot.docs.forEach(doc =>{
+                    if(doc.id === currentUser){
+                        this.produtos = doc.data();
+                    } 
+                })
+            })
+        }
     }
 };
 </script>
