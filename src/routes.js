@@ -5,6 +5,7 @@ import Pedidos from './components/Pedidos/ListaPedidos.vue'
 import NovoPedido from './components/Pedidos/NovoPedido.vue'
 import Estoque from './components/Estoque/ListaEstoque.vue'
 import Clientes from './components/Clientes/ListaClientes.vue'
+import NovoCLiente from './components/Clientes/NovoCliente.vue'
 import Vendas from './components/Vendas/ListaVendas.vue'
 
 export const routes = [
@@ -18,6 +19,7 @@ export const routes = [
         { path: '/novoPedido', component: NovoPedido},
         { path: '/estoque', component: Estoque},
         { path: '/clientes', component: Clientes},
+        { path: '/novoCLiente', component: NovoCLiente},
         { path: '/vendas', component: Vendas},
         ]
     },

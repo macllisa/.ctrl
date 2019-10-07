@@ -50,13 +50,14 @@
 <script>
 import firebase from 'firebase';
 import { routes } from '../routes';
+import { usersCollection } from '../firebase.js';
 
 export default {
     data(){
         return{
             drawer: true,
             routes,
-            username: 'Maria Clara Santos',
+            username: '',
             items: [
                 { title: 'Dashboard', icon: 'mdi-view-dashboard-outline', link: '/dashboard'},
                 { title: 'Pedidos', icon: 'mdi-clipboard-list-outline', link: '/pedidos'},
@@ -66,6 +67,11 @@ export default {
             ],
         }
     },
+
+    created(){
+        this.getNome()
+    },
+
     methods: {
         realizarLogout() {
             firebase.auth().signOut().then(
@@ -76,6 +82,17 @@ export default {
             () => {
                 console.log('Erro ao realizar o logout!'); /* eslint-disable-line no-console */
             };
+        },
+
+        getNome(){
+            let currentUser = firebase.auth().currentUser.uid;
+            usersCollection.get().then((snapshot) =>{
+                snapshot.docs.forEach(doc =>{
+                    if(doc.id === currentUser){
+                        this.username = doc.data().nome
+                    } 
+                })
+            })
         }
     }
 }

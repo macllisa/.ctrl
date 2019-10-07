@@ -44,7 +44,7 @@
           <div class="flex-grow-1"></div>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
-              <v-btn small color="grey lighten-1" dark depressed class="px-2 mb-2" v-on="on">Adicionar Produto</v-btn>
+              <v-btn small color="primary" dark depressed class="px-2 mb-2" v-on="on">Adicionar Produto</v-btn>
             </template>
             <v-card class="pa-4">
               <v-card-title>
@@ -101,7 +101,6 @@ import { produtosCollection } from '../../firebase.js';
 
 export default {
   data: () => ({
-    dialog: false,
     codigoPedido: "",
     dataPedido: "",
     dataRecebimentoPedido: "",

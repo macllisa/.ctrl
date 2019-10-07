@@ -14,3 +14,4 @@ export const db = fire.firestore();
 export const usersCollection = db.collection('usuarios');
 export const pedidosCollection = db.collection('pedidos');
 export const produtosCollection = db.collection('produtos');
+export const clientesCollection = db.collection('clientes');
