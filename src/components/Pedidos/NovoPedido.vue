@@ -4,10 +4,10 @@
     <v-row class="mx-3 mt-3">
       <v-text-field
         class="px-1"
-        id="codPed"
+        id="codigoPedido"
         type="text"
-        name="codPed"
-        v-model="codPed"
+        name="codigoPedido"
+        v-model="codigoPedido"
         required
         outlined
         color="primary"
@@ -15,10 +15,10 @@
       />
       <v-text-field
         class="px-1"
-        id="dataPed"
+        id="dataPedidoido"
         type="text"
-        name="dataPed"
-        v-model="dataPed"
+        name="dataPedido"
+        v-model="dataPedido"
         required
         outlined
         color="primary"
@@ -26,10 +26,10 @@
       />
       <v-text-field
         class="px-1"
-        id="dataChegPed"
+        id="dataRecebimentoPedido"
         type="text"
-        name="dataChegPed"
-        v-model="dataChegPed"
+        name="dataRecebimentoPedido"
+        v-model="dataRecebimentoPedido"
         required
         outlined
         color="primary"
@@ -44,7 +44,7 @@
           <div class="flex-grow-1"></div>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
-              <v-btn small color="grey lighten-1" dark depressed class="px-2 mb-2" v-on="on">Adicionar Produto</v-btn>
+              <v-btn small color="primary" dark depressed class="px-2 mb-2" v-on="on">Adicionar Produto</v-btn>
             </template>
             <v-card class="pa-4">
               <v-card-title>
@@ -54,20 +54,20 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.codProd" color="primary" label="Código"></v-text-field>
+                      <v-text-field v-model="editedItem.codigoProduto" color="primary" label="Código"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
-                        v-model="editedItem.qtdeProd"
+                        v-model="editedItem.qtdeProduto"
                         color="primary"
                         label="Quantidade"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.precProd" color="primary" label="Preço"></v-text-field>
+                      <v-text-field v-model="editedItem.precoProduto" color="primary" label="Preço"></v-text-field>
                     </v-col>
                     <v-col>
-                      <v-text-field v-model="editedItem.descProd" color="primary" label="Descrição"></v-text-field>
+                      <v-text-field v-model="editedItem.descricaoProduto" color="primary" label="Descrição"></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -95,39 +95,41 @@
 </template>
 
 <script>
+import firebase from 'firebase';
+import { pedidosCollection } from '../../firebase.js';
+import { produtosCollection } from '../../firebase.js';
+
 export default {
   data: () => ({
-    dialog: false,
-    codPed: "",
-    dataPed: "",
-    dataChegPed: "",
+    codigoPedido: "",
+    dataPedido: "",
+    dataRecebimentoPedido: "",
     headers: [
       {
         text: "Código",
         align: "left",
-        value: "codProd"
+        value: "codigoProduto"
       },
-      { text: "Descrição", value: "descProd" },
-      { text: "Quantidade", value: "qtdeProd" },
-      { text: "Preço unitário", value: "precProd" },
+      { text: "Descrição", value: "descricaoProduto" },
+      { text: "Quantidade", value: "qtdeProduto" },
+      { text: "Preço unitário", value: "precoProduto" },
       { text: 'Ações', value: 'action', sortable: false }
     ],
     products: [],
     editedIndex: -1,
     editedItem: {
-      codProd: "",
-      descProd: "",
-      qtdeProd: "",
-      precProd: ""
+      codigoProduto: "",
+      descricaoProduto: "",
+      qtdeProduto: "",
+      precoProduto: ""
     },
     defaultItem: {
-      codProd: "",
-      descProd: "",
-      qtdeProd: "",
-      precProd: ""
+      codigoProduto: "",
+      descricaoProduto: "",
+      qtdeProduto: "",
+      precoProduto: ""
     }
   }),
-
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
@@ -139,7 +141,6 @@ export default {
       val || this.close();
     }
   },
-
   methods: {  
     editItem(item) {
       this.editedIndex = this.products.indexOf(item);
@@ -170,11 +171,45 @@ export default {
       this.close();
     },
 
-    salvarPedido(){
+    salvarProdutos() {
+      var userLogado = firebase.auth().currentUser.uid;
+      this.products.forEach(produto => {
+        var codigoProduto = produto.codigoProduto;
+        var codigoSet = codigoProduto + this.codigoPedido
+         produtosCollection.doc(userLogado).set({
+          [codigoSet]:{
+          CodProduto: produto.codigoProduto,
+          Pedido: this.codigoPedido,
+          Descricao: produto.descricaoProduto,
+          Quantidade: produto.qtdeProduto,
+          Preco : produto.precoProduto
+          }
+        },{ merge:true })
+      });
+    },
 
+    salvarPedido(){
+      var currentUser = firebase.auth().currentUser.uid;
+      var codPedido = this.codigoPedido;
+      pedidosCollection.doc(currentUser).set({
+          [codPedido]:{ 
+          DataEmissao: this.dataPedido,
+          DataRecebimento: this.dataRecebimentoPedido
+          }
+      },{ merge: true})
+      .then(() => {
+        this.salvarProdutos()
+        alert('Pedido cadastrado com sucesso!');
+        console.log('Pedido cadastrado com sucesso.')
+      },
+      (error)=> {
+        alert('Erro ao cadastrar pedido! Ver log para mais informacoes');
+        console.log('Erro: ' + error);
+      })
     }
   }
-};
+}
+
 </script>
 
 <style scoped>

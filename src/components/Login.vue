@@ -31,7 +31,7 @@
                     </v-form>
                     <v-row class="px-3">
                         <router-link class="font-weight-light body-2" to="/cadastro">Cadastre-se</router-link>
-                        <v-btn @click="realizarLogin()" small outlined color="primary" class="ml-auto">
+                        <v-btn @click="realizarLogin()" :loading="logando" small outlined color="primary" class="ml-auto">
                             <span>Login</span>
                         </v-btn>
                     </v-row>
@@ -43,14 +43,14 @@
 </template>
 
 <script>
-import firebase from 'firebase'
-import { usersCollection } from "../firebase.js"
+import firebase from 'firebase';
 import { routes } from '../routes';
 
 export default {
   name: 'Login',
   data() {
     return {
+        logando: false,
         email: '',
         senha: '',
         routes,
@@ -68,10 +68,10 @@ export default {
         return this.$refs.form.validate()
     },
     loginComEmailESenha(email, senha) {
-        firebase.auth().signInWithEmailAndPassword(email, senha).then(
+        return firebase.auth().signInWithEmailAndPassword(email, senha).then(
             () => {
                 console.log("Logado com sucesso "); /* eslint-disable-line no-console */
-                // TODO ROUTER REPLACE
+                this.$router.replace('/dashboard');
             },
             () => {
                 console.log("Erro ao logar"); /* eslint-disable-line no-console */
@@ -80,7 +80,10 @@ export default {
     },
     realizarLogin() {
         if (this.validarFormularioLogin()) {
-            this.loginComEmailESenha(this.email, this.senha)
+            this.logando = true
+            this.loginComEmailESenha(this.email, this.senha).then(() => {
+                this.logando = false
+            })
         } else {
             console.log("Formulário inválido "); /* eslint-disable-line no-console */
             // TODO alert avisando o usuario que o form esta errado

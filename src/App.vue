@@ -1,7 +1,9 @@
 <template>
     <v-app class="background">
         <v-content>
-            <router-view></router-view>
+            <transition  name="fade">
+                <router-view></router-view>
+            </transition>
         </v-content>
     </v-app>
 </template>
@@ -11,8 +13,8 @@ import { routes } from './routes';
 
 export default {
     name:'App',
-    data(){
-        return{
+    data() {
+        return {
             routes
         }
     }
@@ -22,6 +24,13 @@ export default {
 <style scoped>
 .background{
     background-color: #ececed !important;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active em versões anteriores a 2.1.8 */ {
+  opacity: 0;
 }
 
 </style>

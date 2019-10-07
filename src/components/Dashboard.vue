@@ -32,7 +32,7 @@
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link @click="realizarLogout()">
             <v-list-item-icon>
                 <v-icon>mdi-exit-to-app</v-icon>
             </v-list-item-icon>
@@ -46,13 +46,18 @@
     <router-view></router-view>
 </div>    
 </template>
+
 <script>
+import firebase from 'firebase';
+import { routes } from '../routes';
+import { usersCollection } from '../firebase.js';
 
 export default {
     data(){
         return{
             drawer: true,
-            username: 'Maria Clara Santos',
+            routes,
+            username: '',
             items: [
                 { title: 'Dashboard', icon: 'mdi-view-dashboard-outline', link: '/dashboard'},
                 { title: 'Pedidos', icon: 'mdi-clipboard-list-outline', link: '/pedidos'},
@@ -60,6 +65,34 @@ export default {
                 { title: 'Clientes', icon: 'mdi-account-multiple-outline', link: '/clientes'},
                 { title: 'Vendas', icon: 'mdi-cash-multiple', link: '/vendas'}
             ],
+        }
+    },
+
+    created(){
+        this.getNome()
+    },
+
+    methods: {
+        realizarLogout() {
+            firebase.auth().signOut().then(
+            () => {
+                console.log('Logout realizado com sucesso'); /* eslint-disable-line no-console */
+                this.$router.replace('/');
+            }),
+            () => {
+                console.log('Erro ao realizar o logout!'); /* eslint-disable-line no-console */
+            };
+        },
+
+        getNome(){
+            let currentUser = firebase.auth().currentUser.uid;
+            usersCollection.get().then((snapshot) =>{
+                snapshot.docs.forEach(doc =>{
+                    if(doc.id === currentUser){
+                        this.username = doc.data().nome
+                    } 
+                })
+            })
         }
     }
 }
