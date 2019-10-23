@@ -15,13 +15,7 @@
       />
       <v-dialog ref="dialog" class="px-1" v-model="modal" :return-value.sync="dataPedido">
         <template v-slot:activator="{ on }">
-          <v-text-field
-            v-model="dataPedido"
-            label="Data emissão"
-            outlined
-            readonly
-            v-on="on"
-          ></v-text-field>
+          <v-text-field v-model="dataPedido" label="Data emissão" outlined readonly v-on="on"></v-text-field>
         </template>
         <v-date-picker v-model="dataPedido" :first-day-of-week="0" locale="pt-BR" scrollable>
           <div class="flex-grow-1"></div>
@@ -29,7 +23,6 @@
           <v-btn text color="primary" @click="$refs.dialog.save(dataPedido)">Ok</v-btn>
         </v-date-picker>
       </v-dialog>
-      
 
       <v-text-field
         class="px-1"
@@ -51,7 +44,14 @@
           <div class="flex-grow-1"></div>
           <v-dialog v-model="dialog" max-width="500px">
             <template v-slot:activator="{ on }">
-              <v-btn small color="primary" dark depressed class="px-2 mb-2" v-on="on">Adicionar Produto</v-btn>
+              <v-btn
+                small
+                color="primary"
+                dark
+                depressed
+                class="px-2 mb-2"
+                v-on="on"
+              >Adicionar Produto</v-btn>
             </template>
             <v-card class="pa-4">
               <v-card-title>
@@ -61,7 +61,11 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.codigoProduto" color="primary" label="Código"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.codigoProduto"
+                        color="primary"
+                        label="Código"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
@@ -74,7 +78,11 @@
                       <v-text-field v-model="editedItem.precoProduto" color="primary" label="Preço"></v-text-field>
                     </v-col>
                     <v-col>
-                      <v-text-field v-model="editedItem.descricaoProduto" color="primary" label="Descrição"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.descricaoProduto"
+                        color="primary"
+                        label="Descrição"
+                      ></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -95,16 +103,22 @@
       </template>
     </v-data-table>
     <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn small color="primary" dark class="mx-2 mb-3 mt-5" @click="salvarPedido()">Finalizar pedido</v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+        small
+        color="primary"
+        dark
+        class="mx-2 mb-3 mt-5"
+        @click="salvarPedido()"
+      >Finalizar pedido</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
-import firebase from 'firebase';
-import { pedidosCollection } from '../../firebase.js';
-import { produtosCollection } from '../../firebase.js';
+import firebase from "firebase";
+import { pedidosCollection, estoqueCollection } from "../../firebase.js";
+import { produtosCollection } from "../../firebase.js";
 
 export default {
   data: () => ({
@@ -122,7 +136,7 @@ export default {
       { text: "Descrição", value: "descricaoProduto" },
       { text: "Quantidade", value: "qtdeProduto" },
       { text: "Preço unitário", value: "precoProduto" },
-      { text: 'Ações', value: 'action', sortable: false }
+      { text: "Ações", value: "action", sortable: false }
     ],
     products: [],
     editedIndex: -1,
@@ -150,7 +164,7 @@ export default {
       val || this.close();
     }
   },
-  methods: {  
+  methods: {
     editItem(item) {
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -180,45 +194,106 @@ export default {
       this.close();
     },
 
+    lerEstoque(codigo, quantidade) {
+      var currentUser = firebase.auth().currentUser.uid;
+      let estoque = []
+      estoqueCollection.get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          if (doc.id === currentUser) {
+            estoque = doc.data();
+            console.log(estoque);
+            this.adicionarEstoque(codigo, quantidade, estoque);
+          }
+        });
+      });
+    },
+
+    adicionarEstoque(codigo, quantidade, estoque) {
+      var userLogado = firebase.auth().currentUser.uid;
+      let quantidadeAtual = 0;
+      let cont = 0;
+    
+      Object.keys(estoque).forEach(est => {
+        if (est == codigo) {
+          console.log("codigo igual" + est)
+          quantidadeAtual = estoque[est].qtdeProduto;
+          console.log(quantidadeAtual)
+          cont = 1;
+        }   
+      })
+
+      if (cont != 0) {
+        estoqueCollection.doc(userLogado).set(
+          {
+            [codigo]: {
+              qtdeProduto: (+quantidade) + (+quantidadeAtual)
+            }
+          },
+          { merge: true }
+        );
+      } else {
+        estoqueCollection.doc(userLogado).set(
+          {
+            [codigo]: {
+              qtdeProduto: quantidade
+            }
+          },
+          { merge: true }
+        );
+      }
+      cont = 0;
+    },
+
     salvarProdutos() {
       var userLogado = firebase.auth().currentUser.uid;
       this.products.forEach(produto => {
         var codigoProduto = produto.codigoProduto;
-        var codigoSet = codigoProduto + this.codigoPedido
-         produtosCollection.doc(userLogado).set({
-          [codigoSet]:{
-          CodProduto: produto.codigoProduto,
-          Pedido: this.codigoPedido,
-          Descricao: produto.descricaoProduto,
-          Quantidade: produto.qtdeProduto,
-          Preco : produto.precoProduto
-          }
-        },{ merge:true })
+        var codigoSet = codigoProduto + this.codigoPedido;
+        // salvar no estoque
+        this.lerEstoque(codigoProduto, produto.qtdeProduto) 
+        produtosCollection.doc(userLogado).set(
+          {
+            [codigoSet]: {
+              CodProduto: produto.codigoProduto,
+              Pedido: this.codigoPedido,
+              Descricao: produto.descricaoProduto,
+              Quantidade: produto.qtdeProduto,
+              Preco: produto.precoProduto
+            }
+          },
+          { merge: true }
+        );
       });
     },
 
-    salvarPedido(){
+    salvarPedido() {
       var currentUser = firebase.auth().currentUser.uid;
       var codPedido = this.codigoPedido;
-      pedidosCollection.doc(currentUser).set({
-          [codPedido]:{ 
-          DataEmissao: this.dataPedido,
-          DataRecebimento: this.dataRecebimentoPedido
+      pedidosCollection
+        .doc(currentUser)
+        .set(
+          {
+            [codPedido]: {
+              DataEmissao: this.dataPedido,
+              DataRecebimento: this.dataRecebimentoPedido
+            }
+          },
+          { merge: true }
+        )
+        .then(
+          () => {
+            this.salvarProdutos();
+            alert("Pedido cadastrado com sucesso!");
+            console.log("Pedido cadastrado com sucesso.");
+          },
+          error => {
+            alert("Erro ao cadastrar pedido! Ver log para mais informacoes");
+            console.log("Erro: " + error);
           }
-      },{ merge: true})
-      .then(() => {
-        this.salvarProdutos()
-        alert('Pedido cadastrado com sucesso!');
-        console.log('Pedido cadastrado com sucesso.')
-      },
-      (error)=> {
-        alert('Erro ao cadastrar pedido! Ver log para mais informacoes');
-        console.log('Erro: ' + error);
-      })
+        );
     }
   }
-}
-
+};
 </script>
 
 <style scoped>
