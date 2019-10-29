@@ -20,20 +20,34 @@
 </template>
 
 <script>
-    import firebase from 'firebase';
-    import { estoqueCollection } from '../../firebase.js';
+import firebase from 'firebase';
+import { estoqueCollection } from '../../firebase.js';
 
-    export default {
-        data () {
-        return {
-            expanded: [],
-            singleExpand: true,
-            headers: [
-            { text: 'Código', value: 'codProduto', align: 'left'},
-            { text: 'Quantidade', value: 'qtde' }
-            ],
-            estoque: [],
-        }
-        },
+export default {
+  data () {
+    return {
+      expanded: [],
+      estoque: [],
+      singleExpand: true,
+      headers: [
+        { text: 'Código', value: 'codProduto', align: 'left'},
+        { text: 'Quantidade', value: 'qtde' } 
+      ],
+      estoque: [],
     }
+  },
+
+  methods: {
+    lerEstoque(){
+      estoqueCollection.get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          if (doc.id === currentUser) {
+            this.estoque = doc.data();
+          }
+        });
+      });
+    }
+  },
+}
+    
 </script>
