@@ -13,9 +13,15 @@
         color="primary"
         label="Código Pedido"
       />
-      <v-dialog ref="dialog" class="px-1" width="290px" v-model="modalData" :return-value.sync="dataPedido">
+      <v-dialog
+        ref="dialog"
+        class="px-1"
+        width="290px"
+        v-model="modalData"
+        :return-value.sync="dataPedido"
+      >
         <template v-slot:activator="{ on }">
-          <v-text-field v-model="dataPedido" label="Data emissão" outlined readonly v-on="on"></v-text-field>
+          <v-text-field v-model="getDataPedido" label="Data emissão" outlined readonly v-on="on"></v-text-field>
         </template>
         <v-date-picker v-model="dataPedido" locale="pt-BR" :max="dataAtual">
           <v-spacer></v-spacer>
@@ -24,11 +30,28 @@
         </v-date-picker>
       </v-dialog>
 
-      <v-dialog ref="dialogDate" class="px-1" width="290px" v-model="modalDataRecebimento" :return-value.sync="dataRecebimentoPedido">
+      <v-dialog
+        ref="dialogDate"
+        class="px-1"
+        width="290px"
+        v-model="modalDataRecebimento"
+        :return-value.sync="dataRecebimentoPedido"
+      >
         <template v-slot:activator="{ on }">
-          <v-text-field v-model="dataRecebimentoPedido" label="Data recebimento" outlined readonly v-on="on"></v-text-field>
+          <v-text-field
+            v-model="getDataRecebimentoPedido"
+            label="Data recebimento"
+            outlined
+            readonly
+            v-on="on"
+          ></v-text-field>
         </template>
-        <v-date-picker v-model="dataRecebimentoPedido" locale="pt-BR" :min="dataPedido" :max="dataAtual">
+        <v-date-picker
+          v-model="dataRecebimentoPedido"
+          locale="pt-BR"
+          :min="dataPedido"
+          :max="dataAtual"
+        >
           <v-spacer></v-spacer>
           <v-btn text color="grey darken-1" @click="modalDataRecebimento = false">Cancelar</v-btn>
           <v-btn text color="primary" @click="$refs.dialogDate.save(dataRecebimentoPedido)">Ok</v-btn>
@@ -127,7 +150,7 @@ export default {
     codigoPedido: "",
     dataPedido: "",
     dataRecebimentoPedido: "",
-    dataAtual: (new Date().toISOString().slice(0, 10)),
+    dataAtual: new Date().toISOString().slice(0, 10),
     headers: [
       {
         text: "Código",
@@ -157,6 +180,12 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
+    },
+    getDataPedido() {
+      return this.formatDate(this.dataPedido);
+    },
+    getDataRecebimentoPedido() {
+      return this.formatDate(this.dataRecebimentoPedido);
     }
   },
 
@@ -197,7 +226,7 @@ export default {
 
     lerEstoque(codigo, quantidade) {
       var currentUser = firebase.auth().currentUser.uid;
-      let estoque = []
+      let estoque = [];
       estoqueCollection.get().then(snapshot => {
         snapshot.docs.forEach(doc => {
           if (doc.id === currentUser) {
@@ -213,21 +242,21 @@ export default {
       var userLogado = firebase.auth().currentUser.uid;
       let quantidadeAtual = 0;
       let cont = 0;
-    
+
       Object.keys(estoque).forEach(est => {
         if (est == codigo) {
           // console.log("codigo igual" + est)
           quantidadeAtual = estoque[est].qtdeProduto;
           // console.log(quantidadeAtual)
           cont = 1;
-        }   
-      })
+        }
+      });
 
       if (cont != 0) {
         estoqueCollection.doc(userLogado).set(
           {
             [codigo]: {
-              qtdeProduto: (+quantidade) + (+quantidadeAtual)
+              qtdeProduto: +quantidade + +quantidadeAtual
             }
           },
           { merge: true }
@@ -251,7 +280,7 @@ export default {
         var codigoProduto = produto.codigoProduto;
         var codigoSet = codigoProduto + this.codigoPedido;
         // salvar no estoque
-        this.lerEstoque(codigoProduto, produto.qtdeProduto) 
+        this.lerEstoque(codigoProduto, produto.qtdeProduto);
         produtosCollection.doc(userLogado).set(
           {
             [codigoSet]: {
@@ -285,12 +314,19 @@ export default {
           () => {
             this.salvarProdutos();
             alert("Pedido cadastrado com sucesso!");
-            this.$router.push({ path: 'pedidos' })
+            this.$router.push({ path: "pedidos" });
           },
           error => {
             alert("Erro ao cadastrar pedido! Ver log para mais informacoes");
           }
         );
+    },
+
+    formatDate(date) {
+      if (!date) return null;
+
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
     }
   }
 };
