@@ -48,7 +48,7 @@
           <br />
           <v-alert
             :value="alertError"
-            color="pink"
+            color="red"
             dark
             border="top"
             icon="mdi-alert"
@@ -90,7 +90,9 @@ export default {
       this.alertError = true;
       this.errorMessage = message;
     },
-    hideErrorAlert() {},
+    hideErrorAlert() {
+        this.alertError = false;
+    },
     validarFormularioLogin() {
       return this.$refs.form.validate();
     },
@@ -115,7 +117,7 @@ export default {
     realizarLogin() {
       if (this.validarFormularioLogin()) {
         this.logando = true;
-        this.alertError = false;
+        this.hideErrorAlert();
         this.loginComEmailESenha(this.email, this.senha).then(() => {
           this.logando = false;
         });
