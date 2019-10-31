@@ -17,7 +17,7 @@
         <template v-slot:activator="{ on }">
           <v-text-field v-model="dataPedido" label="Data emissão" outlined readonly v-on="on"></v-text-field>
         </template>
-        <v-date-picker v-model="dataPedido" locale="pt-BR">
+        <v-date-picker v-model="dataPedido" locale="pt-BR" :max="dataAtual">
           <v-spacer></v-spacer>
           <v-btn text color="grey darken-1" @click="modal = false">Cancelar</v-btn>
           <v-btn text color="primary" @click="$refs.dialog.save(dataPedido)">Ok</v-btn>
@@ -28,7 +28,7 @@
         <template v-slot:activator="{ on }">
           <v-text-field v-model="dataRecebimentoPedido" label="Data recebimento" outlined readonly v-on="on"></v-text-field>
         </template>
-        <v-date-picker v-model="dataRecebimentoPedido" locale="pt-BR">
+        <v-date-picker v-model="dataRecebimentoPedido" locale="pt-BR" :min="dataPedido" :max="dataAtual">
           <v-spacer></v-spacer>
           <v-btn text color="grey darken-1" @click="modalDataRecebimento = false">Cancelar</v-btn>
           <v-btn text color="primary" @click="$refs.dialogDate.save(dataRecebimentoPedido)">Ok</v-btn>
@@ -127,6 +127,7 @@ export default {
     codigoPedido: "",
     dataPedido: "",
     dataRecebimentoPedido: "",
+    dataAtual: (new Date().toISOString().slice(0, 10)),
     headers: [
       {
         text: "Código",
