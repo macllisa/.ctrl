@@ -5,10 +5,11 @@ import vuetify from './plugins/vuetify';
 import { routes } from './routes';
 import VueRouter from 'vue-router';
 import firebase from 'firebase';
-
+import VueTheMask from 'vue-the-mask';
 
 Vue.config.productionTip = false
 Vue.use(vuetify)
+Vue.use(VueTheMask)
 
 Vue.use(VueRouter)
 

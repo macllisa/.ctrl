@@ -30,6 +30,7 @@
                 dark
                 color="primary"
                 label="CPF"
+                v-mask="cpfMask"
               />
               <v-select
                 id="empresa"
@@ -108,6 +109,7 @@ export default {
       email: "",
       senha: "",
       empresa: "",
+      cpfMask: "###.###.###-##",
       routes,
       validacaoEmail: [
         v => !!v || "E-mail é obrigatório",
