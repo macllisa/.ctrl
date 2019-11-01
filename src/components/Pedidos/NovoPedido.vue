@@ -256,7 +256,8 @@ export default {
         estoqueCollection.doc(userLogado).set(
           {
             [codigo]: {
-              qtdeProduto: +quantidade + +quantidadeAtual
+              qtdeProduto: (+quantidade) + (+quantidadeAtual),
+              codigo: codigo
             }
           },
           { merge: true }
@@ -265,7 +266,8 @@ export default {
         estoqueCollection.doc(userLogado).set(
           {
             [codigo]: {
-              qtdeProduto: quantidade
+              qtdeProduto: quantidade,
+              codigo: codigo
             }
           },
           { merge: true }
