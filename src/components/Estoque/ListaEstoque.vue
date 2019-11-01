@@ -1,21 +1,33 @@
 <template>
   <v-card elevation="1" class="white listaPedidos ma-4">
     <v-row class="pa-4">
-      <v-card-title class="subtitle-1 font-weight-bold">Estoque:</v-card-title>
+      <v-card-title class="subtitle-1 font-weight-bold">ESTOQUE:</v-card-title>
     </v-row>
-    <v-data-table
-      :headers="headers"
-      :items="estoque"
-      :single-expand="singleExpand"
-      :expanded.sync="expanded"
-      item-key="name"
-      show-expand
-      class="elevation-1 pa-3"
-    >
-      <template v-slot:expanded-item="{ headers }">
-        <td :colspan="headers.length">Todas as entradas desse produto</td>
-      </template>
-    </v-data-table>
+    <v-dialog v-model="dialogProducts" max-width="900px">
+      <v-card class="pa-4">
+        <v-card-title>
+         <span>Entradas do Produto</span><span class="primary--text pl-2">{{produtoId}}</span>
+        </v-card-title>     
+      </v-card>
+    </v-dialog>
+
+    <template>
+      <v-card class="mx-4">
+        <v-text-field
+            class="filtrar"
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Filtrar"
+            single-line
+            hide-details
+          ></v-text-field>
+        <v-data-table :headers="headers" :items="produtosEx" :search="search">
+            <template v-slot:item.action="{ item }">
+              <v-icon @click="open(item)">mdi-content-paste</v-icon>
+            </template>
+        </v-data-table>
+      </v-card>
+    </template>
   </v-card>
 </template>
 
@@ -26,12 +38,15 @@ import { estoqueCollection } from '../../firebase.js';
 export default {
   data () {
     return {
-      expanded: [],
+      dialogProducts: false,
       estoque: [],
-      singleExpand: true,
+      produtosEx: [],
+      produtoId : "",
+      search: "",
       headers: [
-        { text: 'Código', value: 'codProduto', align: 'left'},
-        { text: 'Quantidade', value: 'qtde' } 
+        { text: 'Código', value: 'codigo', align: 'left'},
+        { text: 'Quantidade', value: 'qtdeProduto' },
+        { text: "Detalhes", value: "action", sortable: false }
       ]
     }
   },
@@ -42,17 +57,39 @@ export default {
 
   methods: {
     lerEstoque(){
+      
       let currentUser = firebase.auth().currentUser.uid;
       estoqueCollection.get().then(snapshot => {
         snapshot.docs.forEach(doc => {
           if (doc.id === currentUser) {
             this.estoque = doc.data();
-            console.log(this.estoque)
+            this.convert(this.estoque)
           }
         });
       });
+    },
+
+    convert(estoque){
+      this.produtosEx = []
+      Object.values(estoque).forEach(est => {
+           this.produtosEx.push(est)
+      })
+    },
+
+    open(id){
+      this.dialogProducts = true
+      this.produtoId = id.codigo
     }
-  },
+  }
 }
     
 </script>
+
+<style scoped>
+.filtrar{
+    width: 150px;
+    margin-left: auto;
+    margin-right: 0;
+    padding-right: 10px;
+}
+</style>
