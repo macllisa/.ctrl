@@ -5,7 +5,7 @@
     </v-row>
     <v-data-table
       :headers="headers"
-      :items="desserts"
+      :items="estoque"
       :single-expand="singleExpand"
       :expanded.sync="expanded"
       item-key="name"
@@ -32,17 +32,22 @@ export default {
       headers: [
         { text: 'Código', value: 'codProduto', align: 'left'},
         { text: 'Quantidade', value: 'qtde' } 
-      ],
-      estoque: [],
+      ]
     }
+  },
+
+  created(){
+    this.lerEstoque();
   },
 
   methods: {
     lerEstoque(){
+      let currentUser = firebase.auth().currentUser.uid;
       estoqueCollection.get().then(snapshot => {
         snapshot.docs.forEach(doc => {
           if (doc.id === currentUser) {
             this.estoque = doc.data();
+            console.log(this.estoque)
           }
         });
       });

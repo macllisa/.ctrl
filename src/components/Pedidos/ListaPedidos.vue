@@ -10,12 +10,24 @@
         </v-row>
         <v-expansion-panels accordion class="px-4 pb-4">
             <v-expansion-panel v-for="(pedido, idx) in pedidos" :key="idx">
-                <v-expansion-panel-header>{{ pedido.id }}<v-divider vertical class="mx-4"/>{{ pedido.DataEmissao }}<v-divider vertical class="mx-4"/>{{ pedido.DataRecebimento }}</v-expansion-panel-header>
+                <v-expansion-panel-header class="tabela">
+                    <div class="header">{{ pedido.id }}</div>
+                    <div class="header">{{ pedido.DataEmissao }}</div>
+                    <div class="header">{{ pedido.DataRecebimento }}</div>
+                </v-expansion-panel-header>
                     <v-expansion-panel-content>
+                        <div class="tabela grey lighten-2">
+                            <div class="campo pa-1">Código</div>
+                            <div class="campoD pa-1">Descrição</div>
+                            <div class="campo pa-1">Quantidade</div>
+                            <div class="campo pa-1">Preço</div> 
+                        </div> 
                         <div v-for="(produto, id) in produtos" :key="id">
-                            <div v-if="produto.Pedido === pedido.id">
-                                {{produto.CodProduto}}{{produto.Descricao}}{{produto.Quantidade}}{{produto.Preco}}
-                                <v-divider/>
+                            <div class="tabela" v-if="produto.Pedido === pedido.id">
+                                <div class="campo pa-1">{{produto.CodProduto}}</div>
+                                <div class="campoD pa-1">{{produto.Descricao}}</div>
+                                <div class="campo pa-1">{{produto.Quantidade}}</div>
+                                <div class="campo pa-1">{{produto.Preco}}</div>  
                             </div>
                         </div>
                     </v-expansion-panel-content>
@@ -76,3 +88,25 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.tabela{
+    display: flex;
+}
+
+.campo{
+    width: 20%;
+    padding-left: 10px;
+    border: 1px solid rgb(201, 201, 201);
+}
+
+.campoD{
+    width: 40%;
+    padding-left: 10px;
+    border: 1px solid rgb(201, 201, 201);
+}
+
+.header{
+    width: 50px;
+}
+</style>
