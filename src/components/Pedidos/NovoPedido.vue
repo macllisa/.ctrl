@@ -13,28 +13,50 @@
         color="primary"
         label="Código Pedido"
       />
-      <v-dialog ref="dialog" class="px-1" v-model="modal" :return-value.sync="dataPedido">
+      <v-dialog
+        ref="dialog"
+        class="px-1"
+        width="290px"
+        v-model="modalData"
+        :return-value.sync="dataPedido"
+      >
         <template v-slot:activator="{ on }">
-          <v-text-field v-model="dataPedido" label="Data emissão" outlined readonly v-on="on"></v-text-field>
+          <v-text-field v-model="getDataPedido" label="Data emissão" outlined readonly v-on="on"></v-text-field>
         </template>
-        <v-date-picker v-model="dataPedido" :first-day-of-week="0" locale="pt-BR" scrollable>
-          <div class="flex-grow-1"></div>
+        <v-date-picker v-model="dataPedido" locale="pt-BR" :max="dataAtual">
+          <v-spacer></v-spacer>
           <v-btn text color="grey darken-1" @click="modal = false">Cancelar</v-btn>
           <v-btn text color="primary" @click="$refs.dialog.save(dataPedido)">Ok</v-btn>
         </v-date-picker>
       </v-dialog>
 
-      <v-text-field
+      <v-dialog
+        ref="dialogDate"
         class="px-1"
-        id="dataRecebimentoPedido"
-        type="text"
-        name="dataRecebimentoPedido"
-        v-model="dataRecebimentoPedido"
-        required
-        outlined
-        color="primary"
-        label="Data Chegada"
-      />
+        width="290px"
+        v-model="modalDataRecebimento"
+        :return-value.sync="dataRecebimentoPedido"
+      >
+        <template v-slot:activator="{ on }">
+          <v-text-field
+            v-model="getDataRecebimentoPedido"
+            label="Data recebimento"
+            outlined
+            readonly
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="dataRecebimentoPedido"
+          locale="pt-BR"
+          :min="dataPedido"
+          :max="dataAtual"
+        >
+          <v-spacer></v-spacer>
+          <v-btn text color="grey darken-1" @click="modalDataRecebimento = false">Cancelar</v-btn>
+          <v-btn text color="primary" @click="$refs.dialogDate.save(dataRecebimentoPedido)">Ok</v-btn>
+        </v-date-picker>
+      </v-dialog>
     </v-row>
 
     <v-data-table :headers="headers" :items="products" hide-default-footer class="elevation-2 mx-4">
@@ -122,11 +144,13 @@ import { produtosCollection } from "../../firebase.js";
 
 export default {
   data: () => ({
-    modal: false,
+    modalDataRecebimento: false,
+    modalData: false,
     dialog: false,
     codigoPedido: "",
     dataPedido: "",
     dataRecebimentoPedido: "",
+    dataAtual: new Date().toISOString().slice(0, 10),
     headers: [
       {
         text: "Código",
@@ -156,6 +180,12 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
+    },
+    getDataPedido() {
+      return this.formatDate(this.dataPedido);
+    },
+    getDataRecebimentoPedido() {
+      return this.formatDate(this.dataRecebimentoPedido);
     }
   },
 
@@ -196,12 +226,12 @@ export default {
 
     lerEstoque(codigo, quantidade) {
       var currentUser = firebase.auth().currentUser.uid;
-      let estoque = []
+      let estoque = [];
       estoqueCollection.get().then(snapshot => {
         snapshot.docs.forEach(doc => {
           if (doc.id === currentUser) {
             estoque = doc.data();
-            console.log(estoque);
+            // console.log(estoque);
             this.adicionarEstoque(codigo, quantidade, estoque);
           }
         });
@@ -212,21 +242,21 @@ export default {
       var userLogado = firebase.auth().currentUser.uid;
       let quantidadeAtual = 0;
       let cont = 0;
-    
+
       Object.keys(estoque).forEach(est => {
         if (est == codigo) {
-          console.log("codigo igual" + est)
+          // console.log("codigo igual" + est)
           quantidadeAtual = estoque[est].qtdeProduto;
-          console.log(quantidadeAtual)
+          // console.log(quantidadeAtual)
           cont = 1;
-        }   
-      })
+        }
+      });
 
       if (cont != 0) {
         estoqueCollection.doc(userLogado).set(
           {
             [codigo]: {
-              qtdeProduto: (+quantidade) + (+quantidadeAtual)
+              qtdeProduto: +quantidade + +quantidadeAtual
             }
           },
           { merge: true }
@@ -250,7 +280,7 @@ export default {
         var codigoProduto = produto.codigoProduto;
         var codigoSet = codigoProduto + this.codigoPedido;
         // salvar no estoque
-        this.lerEstoque(codigoProduto, produto.qtdeProduto) 
+        this.lerEstoque(codigoProduto, produto.qtdeProduto);
         produtosCollection.doc(userLogado).set(
           {
             [codigoSet]: {
@@ -284,13 +314,18 @@ export default {
           () => {
             this.salvarProdutos();
             alert("Pedido cadastrado com sucesso!");
-            console.log("Pedido cadastrado com sucesso.");
+            this.$router.push({ path: "pedidos" });
           },
           error => {
             alert("Erro ao cadastrar pedido! Ver log para mais informacoes");
-            console.log("Erro: " + error);
           }
         );
+    },
+
+    formatDate(date) {
+      if (!date) return null;
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
     }
   }
 };

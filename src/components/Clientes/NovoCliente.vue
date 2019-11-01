@@ -100,7 +100,7 @@ export default {
             },
             (error)=> {
                 alert('Erro ao cadastrar cliente!');
-                console.log('Erro: ' + error);
+                console.log('Erro: ' + error); /* eslint-disable-line no-console */
             })
         }
     }
