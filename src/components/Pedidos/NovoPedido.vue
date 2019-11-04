@@ -227,15 +227,19 @@ export default {
     lerEstoque(codigo, quantidade) {
       var currentUser = firebase.auth().currentUser.uid;
       let estoque = [];
+      let achou = false;
       estoqueCollection.get().then(snapshot => {
         snapshot.docs.forEach(doc => {
           if (doc.id === currentUser) {
             estoque = doc.data();
-            // console.log(estoque);
             this.adicionarEstoque(codigo, quantidade, estoque);
+            achou = true;
           }
         });
       });
+      if(achou == false){
+          this.ifExists(currentUser)
+      }
     },
 
     adicionarEstoque(codigo, quantidade, estoque) {
@@ -274,6 +278,11 @@ export default {
         );
       }
       cont = 0;
+    },
+
+    ifExists(userId){
+    // console.log("documento não encontrado então criado")
+      estoqueCollection.doc(userId).set({},{ merge: true })
     },
 
     salvarProdutos() {

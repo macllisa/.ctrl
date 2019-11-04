@@ -1,6 +1,6 @@
 <template>
   <v-card elevation="1" class="white listaPedidos ma-4">
-    <v-row class="pa-4">
+    <v-row class="px-4 pt-4">
       <v-card-title class="subtitle-1 font-weight-bold">ESTOQUE:</v-card-title>
     </v-row>
     <v-dialog v-model="dialogProducts" max-width="900px">
@@ -12,7 +12,7 @@
     </v-dialog>
 
     <template>
-      <v-card class="mx-4">
+      <v-card flat class="mx-4">
         <v-text-field
             class="filtrar"
             v-model="search"
@@ -46,7 +46,7 @@ export default {
       headers: [
         { text: 'Código', value: 'codigo', align: 'left'},
         { text: 'Quantidade', value: 'qtdeProduto' },
-        { text: "Detalhes", value: "action", sortable: false }
+        { text: "Detalhes", value: "action", align: 'right', sortable: false }
       ]
     }
   },
