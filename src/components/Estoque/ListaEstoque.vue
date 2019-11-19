@@ -7,6 +7,8 @@
       <v-card class="pa-4">
         <v-card-title>
          <span>Entradas do Produto</span><span class="primary--text pl-2">{{produtoId}}</span>
+         <v-spacer></v-spacer>
+           <v-btn icon small fab @click="dialogProducts = !dialogProducts"><v-icon small>mdi-close</v-icon></v-btn>
          <v-data-table class="py-4 dataTable" :headers="headersEsteProduto" :items="esteProduto"></v-data-table>
         </v-card-title>     
       </v-card>
@@ -48,14 +50,13 @@ export default {
       search: "",
       headers: [
         { text: 'Código', value: 'codigo', align: 'left'},
+        { text: 'Descrição', value: 'Descricao'},
         { text: 'Quantidade', value: 'qtdeProduto' },
         { text: "Detalhes", value: "action", align: 'right', sortable: false }
       ],
       headersEsteProduto: [
-        { text: 'Código', value: 'CodProduto', align: 'left'},
-        { text: 'Descrição', value: 'Descricao'},
-        { text: 'Quantidade', value: 'Quantidade' },
         { text: 'Preço', value: 'Preco' },
+        { text: 'Quantidade', value: 'Quantidade' },
         { text: 'Pedido de Origem', value: 'Pedido' },
       ]
     }
