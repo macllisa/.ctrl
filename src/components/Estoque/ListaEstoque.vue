@@ -50,7 +50,6 @@ export default {
       search: "",
       headers: [
         { text: 'Código', value: 'codigo', align: 'left'},
-        { text: 'Descrição', value: 'Descricao'},
         { text: 'Quantidade', value: 'qtdeProduto' },
         { text: "Detalhes", value: "action", align: 'right', sortable: false }
       ],
