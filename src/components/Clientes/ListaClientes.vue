@@ -121,11 +121,15 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
+      return this.editedIndex === -1 ? "Novo Cliente" : "Editar Cliente";
     },
   },
 
   methods: {
+    formatEmail(email) {
+      return email.substring(0, email.indexOf("@"))
+    }, 
+
     getClientes() {
       let currentUser = firebase.auth().currentUser.uid;
       clientesCollection.get().then(snapshot => {
@@ -148,12 +152,26 @@ export default {
     },
 
     save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.arrayClientes[this.editedIndex], this.editedItem);
-      } else {
-        this.arrayClientes.push(this.editedItem);
-      }
+      let createdAt = new Date();
+      let currentUser = firebase.auth().currentUser.uid;
+      clientesCollection.doc(currentUser).set({
+        [this.formatEmail(this.editedItem.Email)]: {
+          Nome: this.editedItem.Nome,
+          Telefone: this.editedItem.Telefone,
+          Email: this.editedItem.Email,
+          Aniversario: this.editedItem.Aniversario,
+          Endereco: this.editedItem.Endereco
+        }
+        },{ merge: true})
+        .then(() => {
+          alert('Cliente cadastrado com sucesso!'); 
+        },
+        (error)=> {
+          alert('Erro ao cadastrar cliente!');
+          console.log('Erro: ' + error); /* eslint-disable-line no-console */
+        }); 
       this.close();
+      this.getClientes();
     },
 
     editItem(item) {
@@ -165,8 +183,23 @@ export default {
     deleteItem(item) {
       const index = this.arrayClientes.indexOf(item);
       confirm("Tem certeza que deseja excluir esse cliente?") &&
-        this.arrayClientes.splice(index, 1);
+        this.deletarCliente(item);
     },
+
+    deletarCliente(item) {
+      let currentUser = firebase.auth().currentUser.uid;
+      clientesCollection.doc(currentUser).update(
+        {
+          [this.formatEmail(item.Email)]: firebase.firestore.FieldValue.delete()
+        }
+      )
+      .then(() => {
+        console.log("Cliente deletado com sucesso")
+      })
+      .catch((error) => {
+        console.log("Erro ao deletar cliente", error)
+      })
+    }
   }
 };
 </script>
