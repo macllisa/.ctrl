@@ -1,60 +1,33 @@
 <template>
-  <v-card elevation="1" class="white listaPedidos ma-4">
-    <v-card-title class="subtitle-1 font-weight-bold ml-1 pt-6 py-2">NOVO PEDIDO</v-card-title>
+  <v-card elevation="1" class="white ma-4">
+    <v-card-title class="subtitle-1 font-weight-bold ml-1 pt-6 py-2">NOVA VENDA</v-card-title>
     <v-row class="mx-3 mt-3">
-      <v-text-field
+      <v-autocomplete
         class="px-1"
-        id="codigoPedido"
+        id="clienteVenda"
         type="text"
-        name="codigoPedido"
-        v-model="codigoPedido"
+        name="clienteVenda"
+        v-model="clienteVenda"
         required
         outlined
         color="primary"
-        label="Código Pedido"
+        label="Cliente"
+        :items="clientes"
       />
       <v-dialog
         ref="dialog"
         class="px-1"
         width="290px"
         v-model="modalData"
-        :return-value.sync="dataPedido"
+        :return-value.sync="dataVenda"
       >
         <template v-slot:activator="{ on }">
-          <v-text-field v-model="getDataPedido" label="Data emissão" outlined readonly v-on="on"></v-text-field>
+          <v-text-field v-model="getDataVenda" label="Data Realização" outlined readonly v-on="on"></v-text-field>
         </template>
-        <v-date-picker v-model="dataPedido" locale="pt-BR" :max="dataAtual">
+        <v-date-picker v-model="dataVenda" locale="pt-BR" :max="dataAtual">
           <v-spacer></v-spacer>
           <v-btn text color="grey darken-1" @click="modal = false">Cancelar</v-btn>
-          <v-btn text color="primary" @click="$refs.dialog.save(dataPedido)">Ok</v-btn>
-        </v-date-picker>
-      </v-dialog>
-
-      <v-dialog
-        ref="dialogDate"
-        class="px-1"
-        width="290px"
-        v-model="modalDataRecebimento"
-        :return-value.sync="dataRecebimentoPedido"
-      >
-        <template v-slot:activator="{ on }">
-          <v-text-field
-            v-model="getDataRecebimentoPedido"
-            label="Data recebimento"
-            outlined
-            readonly
-            v-on="on"
-          ></v-text-field>
-        </template>
-        <v-date-picker
-          v-model="dataRecebimentoPedido"
-          locale="pt-BR"
-          :min="dataPedido"
-          :max="dataAtual"
-        >
-          <v-spacer></v-spacer>
-          <v-btn text color="grey darken-1" @click="modalDataRecebimento = false">Cancelar</v-btn>
-          <v-btn text color="primary" @click="$refs.dialogDate.save(dataRecebimentoPedido)">Ok</v-btn>
+          <v-btn text color="primary" @click="$refs.dialog.save(dataVenda)">Ok</v-btn>
         </v-date-picker>
       </v-dialog>
     </v-row>
@@ -99,13 +72,6 @@
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field v-model="editedItem.precoProduto" color="primary" label="Preço"></v-text-field>
                     </v-col>
-                    <v-col>
-                      <v-text-field
-                        v-model="editedItem.descricaoProduto"
-                        color="primary"
-                        label="Descrição"
-                      ></v-text-field>
-                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -131,25 +97,29 @@
         color="primary"
         dark
         class="mx-2 mb-3 mt-5"
-        @click="salvarPedido()"
-      >Finalizar pedido</v-btn>
+        @click="salvarVenda()"
+      >Finalizar venda</v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 import firebase from "firebase";
-import { pedidosCollection, estoqueCollection } from "../../firebase.js";
-import { produtosCollection } from "../../firebase.js";
+import {
+  vendasCollection,
+  estoqueCollection,
+  saidaCollection,
+  clientesCollection, 
+  produtosCollection
+} from "../../firebase.js";
 
 export default {
   data: () => ({
-    modalDataRecebimento: false,
     modalData: false,
     dialog: false,
-    codigoPedido: "",
-    dataPedido: "",
-    dataRecebimentoPedido: "",
+    dataVenda: "",
+    clienteVenda: "",
+    codigoVenda: "",
     dataAtual: new Date().toISOString().slice(0, 10),
     headers: [
       {
@@ -157,7 +127,6 @@ export default {
         align: "left",
         value: "codigoProduto"
       },
-      { text: "Descrição", value: "descricaoProduto" },
       { text: "Quantidade", value: "qtdeProduto" },
       { text: "Preço unitário", value: "precoProduto" },
       { text: "Ações", value: "action", sortable: false }
@@ -166,23 +135,28 @@ export default {
     editedIndex: -1,
     editedItem: {
       codigoProduto: "",
-      descricaoProduto: "",
       qtdeProduto: "",
       precoProduto: ""
     },
     defaultItem: {
       codigoProduto: "",
-      descricaoProduto: "",
       qtdeProduto: "",
       precoProduto: ""
-    }
+    },
+    estoqueProduto: "",
+    arrayClientes: [],
+    codigosClientes: [],
+    clientes: []
   }),
+  mounted() {
+    this.getClientes();
+  },
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
     },
-    getDataPedido() {
-      return this.formatDate(this.dataPedido);
+    getDataVenda() {
+      return this.formatDate(this.dataVenda);
     },
     getDataRecebimentoPedido() {
       return this.formatDate(this.dataRecebimentoPedido);
@@ -195,6 +169,26 @@ export default {
     }
   },
   methods: {
+    generateGUID() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    },
+
+    getClientes() {
+      let currentUser = firebase.auth().currentUser.uid;
+      clientesCollection.get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          if (doc.id === currentUser) {
+            let clientes = Object.values(doc.data())
+            this.arrayClientes = clientes;
+            this.clientes = clientes.map((item) => item.Nome);
+            this.codigosClientes = clientes.map((item) => item.Id);
+          }
+        });
+      });
+    },
+
     editItem(item) {
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -227,77 +221,62 @@ export default {
     lerEstoque(codigo, quantidade) {
       var currentUser = firebase.auth().currentUser.uid;
       let estoque = [];
-      let achou = false;
       estoqueCollection.get().then(snapshot => {
         snapshot.docs.forEach(doc => {
           if (doc.id === currentUser) {
             estoque = doc.data();
-            this.adicionarEstoque(codigo, quantidade, estoque);
-            achou = true;
+            this.retirarEstoque(codigo, quantidade, estoque);
           }
         });
       });
-      if(achou == false){
-          this.ifExists(currentUser)
-      }
     },
 
-    adicionarEstoque(codigo, quantidade, estoque) {
+    retirarEstoque(codigo, quantidade, estoque) {
       var userLogado = firebase.auth().currentUser.uid;
       let quantidadeAtual = 0;
       let cont = 0;
 
       Object.keys(estoque).forEach(est => {
         if (est == codigo) {
-          // console.log("codigo igual" + est)
           quantidadeAtual = estoque[est].qtdeProduto;
-          // console.log(quantidadeAtual)
-          cont = 1;
         }
       });
 
-      if (cont != 0) {
-        estoqueCollection.doc(userLogado).set(
-          {
-            [codigo]: {
-              qtdeProduto: (+quantidade) + (+quantidadeAtual),
-              codigo: codigo
-            }
-          },
-          { merge: true }
-        );
+      if (quantidadeAtual == 0) {
+        alert("O produto de código " + codigo + " não existe em estoque");
       } else {
-        estoqueCollection.doc(userLogado).set(
-          {
-            [codigo]: {
-              qtdeProduto: quantidade,
-              codigo: codigo
-            }
-          },
-          { merge: true }
-        );
+        if (quantidade > quantidadeAtual) {
+          alert(
+            "O produto de código " +
+              codigo +
+              " não possui a quantidade necessária para a venda"
+          );
+        } else {
+          estoqueCollection.doc(userLogado).set(
+            {
+              [codigo]: {
+                qtdeProduto: +quantidadeAtual - +quantidade,
+                codigo: codigo
+              }
+            },
+            { merge: true }
+          );
+        }
       }
-      cont = 0;
     },
 
-    ifExists(userId){
-    // console.log("documento não encontrado então criado")
-      estoqueCollection.doc(userId).set({},{ merge: true })
-    },
-
-    salvarProdutos() {
+    retirarProdutos() {
       var userLogado = firebase.auth().currentUser.uid;
       this.products.forEach(produto => {
         var codigoProduto = produto.codigoProduto;
-        var codigoSet = codigoProduto + this.codigoPedido;
-        // salvar no estoque
+        var codigoSet = codigoProduto + this.codigoVenda;
+        // retirar do estoque
         this.lerEstoque(codigoProduto, produto.qtdeProduto);
-        produtosCollection.doc(userLogado).set(
+        saidaCollection.doc(userLogado).set(
           {
             [codigoSet]: {
               CodProduto: produto.codigoProduto,
-              Pedido: this.codigoPedido,
-              Descricao: produto.descricaoProduto,
+              Venda: this.codigoVenda,
               Quantidade: produto.qtdeProduto,
               Preco: produto.precoProduto
             }
@@ -307,28 +286,31 @@ export default {
       });
     },
 
-    salvarPedido() {
+    salvarVenda() {
       var currentUser = firebase.auth().currentUser.uid;
-      var codPedido = this.codigoPedido;
-      pedidosCollection
+      var codVenda = this.generateGUID();
+      this.codigoVenda = codVenda;
+      var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)];
+      vendasCollection
         .doc(currentUser)
         .set(
           {
-            [codPedido]: {
-              DataEmissao: this.dataPedido,
-              DataRecebimento: this.dataRecebimentoPedido
+            [codVenda]: {
+              Data: this.dataVenda,
+              Cod: codVenda,
+              Cliente: codigoCliente
             }
           },
           { merge: true }
         )
         .then(
           () => {
-            this.salvarProdutos();
-            alert("Pedido cadastrado com sucesso!");
-            this.$router.push({ path: "pedidos" });
+            this.retirarProdutos();
+            alert("Venda cadastrada com sucesso!");
+            this.$router.push({ path: "vendas" });
           },
           error => {
-            alert("Erro ao cadastrar pedido! Ver log para mais informacoes");
+            alert("Erro ao cadastrar venda! Ver log para mais informacoes");
           }
         );
     },

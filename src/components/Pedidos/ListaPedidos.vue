@@ -18,7 +18,7 @@
     </v-dialog>
 
     <template>
-      <v-card class="mx-4">
+      <v-card flat class="mx-4">
           <v-text-field
             class="filtrar"
             v-model="search"
@@ -55,8 +55,8 @@ export default {
       headers: [
         { text: "Código", value: "id" },
         { text: "Data Emissão", value: "DataEmissao" },
-        { text: "Data Chegada", value: "DataChegada" },
-        { text: "Detalhes", value: "action", sortable: false }
+        { text: "Data Chegada", value: "DataRecebimento" },
+        { text: "Detalhes", value: "action", sortable: false, align: 'right' }
       ],
       headersProdutos:[
         { text: "Código", value: "CodProduto" },

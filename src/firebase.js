@@ -16,3 +16,6 @@ export const pedidosCollection = db.collection('pedidos');
 export const produtosCollection = db.collection('produtos');
 export const clientesCollection = db.collection('clientes');
 export const estoqueCollection = db.collection('estoque');
+export const vendasCollection = db.collection('vendas');
+export const saidaCollection = db.collection('saida');
+
