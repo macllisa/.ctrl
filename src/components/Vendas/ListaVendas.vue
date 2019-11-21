@@ -8,14 +8,14 @@
       </v-card-actions>
     </v-row>
 
-    <!-- <v-dialog v-model="dialogProducts" max-width="900px">
+    <v-dialog v-model="dialogVendas" max-width="900px">
       <v-card class="pa-4">
         <v-card-title>
-         <span>Vendas:</span> <v-spacer></v-spacer><span class="primary--text pl-2">{{produtoId}}</span>
+         <span>Produtos da Venda:</span> <v-spacer></v-spacer><span class="primary--text pl-2"></span>
         </v-card-title>
           <v-data-table class="px-4" hide-default-footer :headers="headersProdutos" :items="produtosEx" :items-per-page="rows"></v-data-table>
       </v-card>
-    </v-dialog> -->
+    </v-dialog>
 
     <template>
       <v-card flat class="mx-4">
@@ -46,12 +46,13 @@ export default {
     return {
       rows: 100,
       vendas: [],
+      dialogVendas: false,
       search: "",
       headers: [
-        { text: "Data", value: "dataVenda" },
-        { text: "Valor", value: "valorVenda" },
-        { text: "Cliente", value: "clienteVenda" },
-        { text: "Status", value: "statusVenda" },
+        { text: "Data", value: "Data" },
+        { text: "Valor", value: "Valor" },
+        { text: "Cliente", value: "NomeCliente" },
+        { text: "Número de Parcelas", value: "Parcelas" },
         { text: "Detalhes", value: "action", sortable: false, align: 'right' }
       ],
     };
@@ -69,32 +70,30 @@ export default {
           if (doc.id === currentUser) {
             let result = doc.data();
             console.log(result)
-            // // Attr = key
-            // for (let key in result) {
-            //   let pedido = {
-            //     id: key
-            //   };
-
-            //   for (let attr in result[key]) {
-            //     pedido[attr] = result[key][attr];
-            //   }
-            //   this.pedidos.push(pedido);
-            // }
+            // Attr = key
+            for (let key in result) {
+              let venda = {};
+              for (let attr in result[key]) {
+                venda[attr] = result[key][attr];
+              }
+              this.vendas.push(venda);
+            }
           }
         });
       });
+      console.log(this.vendas)
     },
 
-    // open(id){
-    //   this.produtosEx = []
-    //   this.dialogProducts = true
-    //   Object.values(this.produtos).forEach(produto => {
-    //     if (produto.Pedido == id.id) {
-    //       this.produtosEx.push(produto)
-    //       this.produtoId = id.id
-    //     }   
-    //   })
-    // },
+    open(id){
+      // this.produtosEx = []
+      this.dialogVendas = true
+      // Object.values(this.produtos).forEach(produto => {
+      //   if (produto.Pedido == id.id) {
+      //     this.produtosEx.push(produto)
+      //     this.produtoId = id.id
+      //   }   
+      // })
+    },
   }
 }
 </script>

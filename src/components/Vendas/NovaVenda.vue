@@ -90,6 +90,29 @@
         <v-icon @click="deleteItem(item)">mdi-delete-forever</v-icon>
       </template>
     </v-data-table>
+
+    <v-row class="mx-3 mt-5">
+      <v-text-field
+        class="px-1 "
+        id="numParcelas"
+        type="number"
+        name="numParcelas"
+        v-model="numParcelas"
+        hide-details
+        required
+        outlined
+        color="primary"
+        label="Número de Parcelas"
+        @change="calcValores()"
+      />
+
+      <v-spacer></v-spacer>      
+      
+      <span class="pa-3 primary--text font-weight-bold">VALOR PARCELA:<span class="grey--text pl-2">{{ valParcela }}</span></span>
+      
+      <span class="pa-3 primary--text font-weight-bold">TOTAL:<span class="grey--text pl-2">{{ valVenda }}</span></span>
+    </v-row>
+
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
@@ -120,6 +143,9 @@ export default {
     dataVenda: "",
     clienteVenda: "",
     codigoVenda: "",
+    valVenda: 0,
+    valParcela: 0,
+    numParcelas: 1,
     dataAtual: new Date().toISOString().slice(0, 10),
     headers: [
       {
@@ -146,6 +172,7 @@ export default {
     estoqueProduto: "",
     arrayClientes: [],
     codigosClientes: [],
+    nomesClientes: [],
     clientes: []
   }),
   mounted() {
@@ -184,6 +211,7 @@ export default {
             this.arrayClientes = clientes;
             this.clientes = clientes.map((item) => item.Nome);
             this.codigosClientes = clientes.map((item) => item.Id);
+            this.nomesClientes = clientes.map((item) => item.Nome);
           }
         });
       });
@@ -216,6 +244,15 @@ export default {
         this.products.push(this.editedItem);
       }
       this.close();
+      this.calcValores();
+    },
+
+    calcValores(){
+      this.valVenda = 0.0;
+      this.products.forEach(produto => {
+        this.valVenda = parseFloat(this.valVenda) + parseFloat(produto.precoProduto);
+      })
+      this.valParcela = this.valVenda / this.numParcelas
     },
 
     lerEstoque(codigo, quantidade) {
@@ -290,6 +327,7 @@ export default {
       var currentUser = firebase.auth().currentUser.uid;
       var codVenda = this.generateGUID();
       this.codigoVenda = codVenda;
+      var clienteNome = this.nomesClientes[this.clientes.indexOf(this.clienteVenda)]
       var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)];
       vendasCollection
         .doc(currentUser)
@@ -298,7 +336,11 @@ export default {
             [codVenda]: {
               Data: this.dataVenda,
               Cod: codVenda,
-              Cliente: codigoCliente
+              Cliente: codigoCliente,
+              NomeCliente: clienteNome,
+              Valor: this.valVenda,
+              Parcelas: this.numParcelas,
+              ValorParcela: this.valParcela
             }
           },
           { merge: true }
