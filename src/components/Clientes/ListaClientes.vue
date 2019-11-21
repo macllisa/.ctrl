@@ -1,6 +1,12 @@
 <template>
   <v-card flat class="white ma-4">
-    <v-data-table flat :headers="headers" :items="arrayClientes" hide-default-footer class="pt-4 px-4">
+    <v-data-table
+      flat
+      :headers="headers"
+      :items="arrayClientes"
+      hide-default-footer
+      class="pt-4 px-4"
+    >
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title class="subtitle-1 font-weight-bold ml-1 py-2">CLIENTES</v-toolbar-title>
@@ -24,32 +30,16 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.Nome"
-                        color="primary"
-                        label="Nome"
-                      ></v-text-field>
+                      <v-text-field v-model="editedItem.Nome" color="primary" label="Nome"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field
-                        v-model="editedItem.Telefone"
-                        color="primary"
-                        label="Telefone"
-                      ></v-text-field>
+                      <v-text-field v-model="editedItem.Telefone" color="primary" label="Telefone"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
-                      <v-text-field 
-                        v-model="editedItem.Email" 
-                        color="primary" 
-                        label="Email"
-                    ></v-text-field>
+                      <v-text-field v-model="editedItem.Email" color="primary" label="Email"></v-text-field>
                     </v-col>
                     <v-col>
-                      <v-text-field
-                        v-model="editedItem.Endereco"
-                        color="primary"
-                        label="Endereço"
-                      ></v-text-field>
+                      <v-text-field v-model="editedItem.Endereco" color="primary" label="Endereço"></v-text-field>
                     </v-col>
                     <v-col>
                       <v-text-field
@@ -105,6 +95,7 @@ export default {
         Endereco: '',
         Aniversario: ''
       },
+      editedItemIdentifier: "",
       defaultItem: {
         Nome: '',
         Telefone: '',
@@ -130,6 +121,12 @@ export default {
       return email.substring(0, email.indexOf("@"))
     }, 
 
+    generateGUID() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    },
+
     getClientes() {
       let currentUser = firebase.auth().currentUser.uid;
       clientesCollection.get().then(snapshot => {
@@ -154,29 +151,53 @@ export default {
     save() {
       let createdAt = new Date();
       let currentUser = firebase.auth().currentUser.uid;
-      clientesCollection.doc(currentUser).set({
-        [this.formatEmail(this.editedItem.Email)]: {
-          Nome: this.editedItem.Nome,
-          Telefone: this.editedItem.Telefone,
-          Email: this.editedItem.Email,
-          Aniversario: this.editedItem.Aniversario,
-          Endereco: this.editedItem.Endereco
-        }
-        },{ merge: true})
-        .then(() => {
-          alert('Cliente cadastrado com sucesso!'); 
-        },
-        (error)=> {
-          alert('Erro ao cadastrar cliente!');
-          console.log('Erro: ' + error); /* eslint-disable-line no-console */
-        }); 
+      let userId = this.generateGUID();
+      if (!this.editedItemIdentifier) {
+        clientesCollection.doc(currentUser).set({
+          [userId]: {
+            Nome: this.editedItem.Nome,
+            Telefone: this.editedItem.Telefone,
+            Email: this.editedItem.Email,
+            Aniversario: this.editedItem.Aniversario,
+            Endereco: this.editedItem.Endereco,
+            Id: userId
+          }
+          },{ merge: true})
+          .then(() => {
+            alert('Cliente cadastrado com sucesso!'); 
+          },
+          (error)=> {
+            alert('Erro ao cadastrar cliente!');
+            console.log('Erro: ' + error); /* eslint-disable-line no-console */
+          });
+      } else {
+        clientesCollection.doc(currentUser).set({
+          [this.editedItemIdentifier]: {
+            Nome: this.editedItem.Nome,
+            Telefone: this.editedItem.Telefone,
+            Email: this.editedItem.Email,
+            Aniversario: this.editedItem.Aniversario,
+            Endereco: this.editedItem.Endereco,
+            Id: this.editedItemIdentifier
+          }
+          },{ merge: true})
+          .then(() => {
+            alert('Cliente cadastrado com sucesso!'); 
+          },
+          (error)=> {
+            alert('Erro ao cadastrar cliente!');
+            console.log('Erro: ' + error); /* eslint-disable-line no-console */
+          });
+      }
       this.close();
       this.getClientes();
+      this.editedItemIdentifier = "";
     },
 
     editItem(item) {
       this.editedIndex = this.arrayClientes.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      this.editedItemIdentifier = this.editedItem.Id;
       this.dialog = true;
     },
 
@@ -190,7 +211,7 @@ export default {
       let currentUser = firebase.auth().currentUser.uid;
       clientesCollection.doc(currentUser).update(
         {
-          [this.formatEmail(item.Email)]: firebase.firestore.FieldValue.delete()
+          [item.Id]: firebase.firestore.FieldValue.delete()
         }
       )
       .then(() => {
