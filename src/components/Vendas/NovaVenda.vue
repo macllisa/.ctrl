@@ -119,7 +119,7 @@ export default {
     dialog: false,
     dataVenda: "",
     clienteVenda: "",
-    codigoVenda: new Date(),
+    codigoVenda: "",
     dataAtual: new Date().toISOString().slice(0, 10),
     headers: [
       {
@@ -169,6 +169,12 @@ export default {
     }
   },
   methods: {
+    generateGUID() {
+      return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+      );
+    },
+
     getClientes() {
       let currentUser = firebase.auth().currentUser.uid;
       clientesCollection.get().then(snapshot => {
@@ -282,7 +288,8 @@ export default {
 
     salvarVenda() {
       var currentUser = firebase.auth().currentUser.uid;
-      var codVenda = this.codigoVenda;
+      var codVenda = this.generateGUID();
+      this.codigoVenda = codVenda;
       var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)];
       vendasCollection
         .doc(currentUser)
@@ -299,7 +306,7 @@ export default {
         .then(
           () => {
             this.retirarProdutos();
-            alert("Venda cadastrado com sucesso!");
+            alert("Venda cadastrada com sucesso!");
             this.$router.push({ path: "vendas" });
           },
           error => {
