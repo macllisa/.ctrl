@@ -6,6 +6,7 @@ import NovoPedido from './components/Pedidos/NovoPedido.vue'
 import Estoque from './components/Estoque/ListaEstoque.vue'
 import Clientes from './components/Clientes/ListaClientes.vue'
 import Vendas from './components/Vendas/ListaVendas.vue'
+import NovaVenda from './components/Vendas/NovaVenda.vue'
 
 export const routes = [
     { path: '*', redirect: '/login' },
@@ -19,6 +20,7 @@ export const routes = [
         { path: '/estoque', component: Estoque},
         { path: '/clientes', component: Clientes},
         { path: '/vendas', component: Vendas},
+        { path: '/novaVenda', component: NovaVenda}
         ]
     },
 ];
