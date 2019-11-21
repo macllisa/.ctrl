@@ -6,6 +6,7 @@
       :items="arrayClientes"
       hide-default-footer
       class="pt-4 px-4"
+      no-data-text="Não existem clientes cadastrados."
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -220,6 +221,7 @@ export default {
       .catch((error) => {
         console.log("Erro ao deletar cliente", error)
       })
+      this.getClientes();
     }
   }
 };

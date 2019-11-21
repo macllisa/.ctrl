@@ -2,7 +2,7 @@
   <v-card elevation="1" class="white ma-4">
     <v-card-title class="subtitle-1 font-weight-bold ml-1 pt-6 py-2">NOVA VENDA</v-card-title>
     <v-row class="mx-3 mt-3">
-      <v-text-field
+      <v-autocomplete
         class="px-1"
         id="clienteVenda"
         type="text"
@@ -12,6 +12,7 @@
         outlined
         color="primary"
         label="Cliente"
+        :items="clientes"
       />
       <v-dialog
         ref="dialog"
@@ -107,9 +108,10 @@ import firebase from "firebase";
 import {
   vendasCollection,
   estoqueCollection,
-  saidaCollection
+  saidaCollection,
+  clientesCollection, 
+  produtosCollection
 } from "../../firebase.js";
-import { produtosCollection } from "../../firebase.js";
 
 export default {
   data: () => ({
@@ -141,8 +143,14 @@ export default {
       qtdeProduto: "",
       precoProduto: ""
     },
-    estoqueProduto: ""
+    estoqueProduto: "",
+    arrayClientes: [],
+    codigosClientes: [],
+    clientes: []
   }),
+  mounted() {
+    this.getClientes();
+  },
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
@@ -161,6 +169,20 @@ export default {
     }
   },
   methods: {
+    getClientes() {
+      let currentUser = firebase.auth().currentUser.uid;
+      clientesCollection.get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          if (doc.id === currentUser) {
+            let clientes = Object.values(doc.data())
+            this.arrayClientes = clientes;
+            this.clientes = clientes.map((item) => item.Nome);
+            this.codigosClientes = clientes.map((item) => item.Id);
+          }
+        });
+      });
+    },
+
     editItem(item) {
       this.editedIndex = this.products.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -261,6 +283,7 @@ export default {
     salvarVenda() {
       var currentUser = firebase.auth().currentUser.uid;
       var codVenda = this.codigoVenda;
+      var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)];
       vendasCollection
         .doc(currentUser)
         .set(
@@ -268,7 +291,7 @@ export default {
             [codVenda]: {
               Data: this.dataVenda,
               Cod: codVenda,
-              Cliente: this.clienteVenda
+              Cliente: codigoCliente
             }
           },
           { merge: true }
