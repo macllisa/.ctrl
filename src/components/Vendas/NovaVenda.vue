@@ -79,7 +79,7 @@
               <v-card-actions>
                 <div class="flex-grow-1"></div>
                 <v-btn color="grey darken-1" text @click="close">Cancelar</v-btn>
-                <v-btn color="primary" text @click="save">Salvar</v-btn>
+                <v-btn color="primary" text @click="save(editedItem.codigoProduto, editedItem.qtdeProduto)">Salvar</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -169,15 +169,18 @@ export default {
       qtdeProduto: "",
       precoProduto: ""
     },
-    estoqueProduto: "",
     arrayClientes: [],
     codigosClientes: [],
     nomesClientes: [],
-    clientes: []
+    clientes: [],
+    estoqueProdutos: []
   }),
+
   mounted() {
-    this.getClientes();
+    this.getClientes()
+    this.getEstoque()
   },
+
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
@@ -237,14 +240,34 @@ export default {
       }, 300);
     },
 
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.products[this.editedIndex], this.editedItem);
+    save(codigo, quantidade) {
+      let quantidadeAtual = 0
+      Object.keys(this.estoqueProdutos).forEach(est => {
+        if (est == codigo) {
+          quantidadeAtual = this.estoqueProdutos[est].qtdeProduto;
+        }
+      });
+
+      if (quantidadeAtual == 0) {
+        alert("O produto de código " + codigo + " não existe em estoque");
       } else {
-        this.products.push(this.editedItem);
-      }
-      this.close();
-      this.calcValores();
+          if (quantidade > quantidadeAtual) {
+            alert("O produto de código " + codigo + " não possui a quantidade necessária para a venda. A quantidade em estoque é " + quantidadeAtual + ".")
+          } else {
+              if (this.editedIndex > -1) {
+                Object.assign(this.products[this.editedIndex], this.editedItem);
+                this.close();
+                this.calcValores();
+              } else {
+                this.products.push(this.editedItem);
+                this.close();
+                this.calcValores();
+              }
+          }
+        }
+
+      
+      
     },
 
     calcValores(){
@@ -253,6 +276,17 @@ export default {
         this.valVenda = parseFloat(this.valVenda) + parseFloat(produto.precoProduto);
       })
       this.valParcela = this.valVenda / this.numParcelas
+    },
+
+    getEstoque(){
+      var currentUser = firebase.auth().currentUser.uid;
+      estoqueCollection.get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          if (doc.id === currentUser) {
+            this.estoqueProdutos = doc.data();
+          }
+        });
+      });
     },
 
     lerEstoque(codigo, quantidade) {
@@ -277,30 +311,18 @@ export default {
         if (est == codigo) {
           quantidadeAtual = estoque[est].qtdeProduto;
         }
-      });
+      })
 
-      if (quantidadeAtual == 0) {
-        alert("O produto de código " + codigo + " não existe em estoque");
-      } else {
-        if (quantidade > quantidadeAtual) {
-          alert(
-            "O produto de código " +
-              codigo +
-              " não possui a quantidade necessária para a venda"
-          );
-        } else {
-          estoqueCollection.doc(userLogado).set(
-            {
-              [codigo]: {
-                qtdeProduto: +quantidadeAtual - +quantidade,
-                codigo: codigo
-              }
-            },
-            { merge: true }
-          );
-        }
-      }
-    },
+      estoqueCollection.doc(userLogado).set(
+        {
+          [codigo]: {
+            qtdeProduto: +quantidadeAtual - +quantidade,
+            codigo: codigo
+          }
+        },
+        { merge: true }
+      )
+      },
 
     retirarProdutos() {
       var userLogado = firebase.auth().currentUser.uid;
@@ -323,12 +345,12 @@ export default {
       });
     },
 
-    salvarVenda() {
+    async salvarVenda() {
       var currentUser = firebase.auth().currentUser.uid;
       var codVenda = this.generateGUID();
       this.codigoVenda = codVenda;
       var clienteNome = this.nomesClientes[this.clientes.indexOf(this.clienteVenda)]
-      var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)];
+      var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)]
       vendasCollection
         .doc(currentUser)
         .set(
