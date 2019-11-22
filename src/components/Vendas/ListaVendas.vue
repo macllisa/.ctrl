@@ -39,7 +39,7 @@
 
 <script>
 import firebase from "firebase";
-import { vendasCollection } from "../../firebase.js";
+import { vendasCollection, saidaCollection } from "../../firebase.js";
 
 export default {
   data() {
@@ -55,11 +55,20 @@ export default {
         { text: "Número de Parcelas", value: "Parcelas" },
         { text: "Detalhes", value: "action", sortable: false, align: 'right' }
       ],
+      produtos: [],
+      headersProdutos: [
+        { text: "Código", value: "CodProduto" },
+        { text: "Preço", value: "Preco" },
+        { text: "Quantidade", value: "Quantidade" }
+      ],
+      produtosEx: [],
+      vendaCod: ""
     };
   },
 
   created() {
     this.getDocumentVendas();
+    this.getDocumentProdutos();
   },
 
   methods: {
@@ -84,15 +93,28 @@ export default {
       console.log(this.vendas)
     },
 
+    getDocumentProdutos() {
+      var currentUser = firebase.auth().currentUser.uid;
+      saidaCollection.get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          if (doc.id === currentUser) {
+            this.produtos = doc.data();
+          }
+        });
+      });
+    },
+
     open(id){
-      // this.produtosEx = []
+      console.log(id)
+      console.log(this.produtos)
+      this.produtosEx = []
       this.dialogVendas = true
-      // Object.values(this.produtos).forEach(produto => {
-      //   if (produto.Pedido == id.id) {
-      //     this.produtosEx.push(produto)
-      //     this.produtoId = id.id
-      //   }   
-      // })
+      Object.values(this.produtos).forEach(produto => {
+        if (produto.Venda == id.Cod) {
+          this.produtosEx.push(produto)
+          this.vendaCod = id.Cod
+        }   
+      })
     },
   }
 }
