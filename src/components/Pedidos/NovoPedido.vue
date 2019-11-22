@@ -59,7 +59,7 @@
       </v-dialog>
     </v-row>
 
-    <v-data-table :headers="headers" :items="products" hide-default-footer class="elevation-2 mx-4">
+    <v-data-table :headers="headers" no-data-text="Nenhum Produto no Pedido" :items="products" hide-default-footer class="elevation-2 mx-4">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title class="subtitle-2">Produtos</v-toolbar-title>

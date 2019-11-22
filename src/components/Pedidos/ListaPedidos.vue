@@ -13,7 +13,7 @@
         <v-card-title>
          <span>Produtos:</span> <v-spacer></v-spacer><span class="primary--text pl-2">{{produtoId}}</span>
         </v-card-title>
-          <v-data-table class="px-4" hide-default-footer :headers="headersProdutos" :items="produtosEx" :items-per-page="rows"></v-data-table>
+          <v-data-table class="px-4" no-data-text="Não existem pedidos cadastrados." hide-default-footer :headers="headersProdutos" :items="produtosEx" :items-per-page="rows"></v-data-table>
       </v-card>
     </v-dialog>
 
