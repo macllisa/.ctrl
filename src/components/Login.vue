@@ -105,7 +105,7 @@ export default {
             console.log(
               "Logado com sucesso "
             ); /* eslint-disable-line no-console */
-            this.$router.replace("/dashboard");
+            this.$router.replace("/pedidos");
           },
           () => {
             this.showErrorAlert(
