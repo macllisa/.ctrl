@@ -345,12 +345,13 @@ export default {
       });
     },
 
-    async salvarVenda() {
+    salvarVenda() {
       var currentUser = firebase.auth().currentUser.uid;
       var codVenda = this.generateGUID();
       this.codigoVenda = codVenda;
       var clienteNome = this.nomesClientes[this.clientes.indexOf(this.clienteVenda)]
       var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)]
+      console.log(this.clienteVenda)
       vendasCollection
         .doc(currentUser)
         .set(

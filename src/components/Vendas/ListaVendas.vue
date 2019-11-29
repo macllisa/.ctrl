@@ -84,6 +84,8 @@ export default {
               let venda = {};
               for (let attr in result[key]) {
                 venda[attr] = result[key][attr];
+                if (attr == 'Data')
+                  venda[attr] = this.formatDate(venda.Data);
               }
               this.vendas.push(venda);
             }
@@ -116,6 +118,12 @@ export default {
         }   
       })
     },
+
+    formatDate(date) {
+      if (!date) return null;
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    }
   }
 }
 </script>

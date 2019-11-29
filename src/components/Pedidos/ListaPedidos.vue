@@ -79,6 +79,7 @@ export default {
         snapshot.docs.forEach(doc => {
           if (doc.id === currentUser) {
             let result = doc.data();
+            console.log(result)
             // Attr = key
             for (let key in result) {
               let pedido = {
@@ -87,6 +88,10 @@ export default {
 
               for (let attr in result[key]) {
                 pedido[attr] = result[key][attr];
+                if (attr == 'DataEmissao')
+                  pedido[attr] = this.formatDate(pedido.DataEmissao);
+                if (attr == 'DataRecebimento')
+                  pedido[attr] = this.formatDate(pedido.DataRecebimento);
               }
               this.pedidos.push(pedido);
             }
@@ -116,6 +121,12 @@ export default {
         }   
       })
     },
+
+    formatDate(date) {
+      if (!date) return null;
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    }
   }
 }
 </script>
