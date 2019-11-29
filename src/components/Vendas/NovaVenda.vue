@@ -32,7 +32,7 @@
       </v-dialog>
     </v-row>
 
-    <v-data-table :headers="headers" :items="products" hide-default-footer class="elevation-2 mx-4">
+    <v-data-table no-data-text="Nenhum Produto na Venda" :headers="headers" :items="products" hide-default-footer class="elevation-2 mx-4">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-toolbar-title class="subtitle-2">Produtos</v-toolbar-title>
@@ -79,7 +79,7 @@
               <v-card-actions>
                 <div class="flex-grow-1"></div>
                 <v-btn color="grey darken-1" text @click="close">Cancelar</v-btn>
-                <v-btn color="primary" text @click="save">Salvar</v-btn>
+                <v-btn color="primary" text @click="save(editedItem.codigoProduto, editedItem.qtdeProduto)">Salvar</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -90,6 +90,29 @@
         <v-icon @click="deleteItem(item)">mdi-delete-forever</v-icon>
       </template>
     </v-data-table>
+
+    <v-row class="mx-3 mt-5">
+      <v-text-field
+        class="px-1 "
+        id="numParcelas"
+        type="number"
+        name="numParcelas"
+        v-model="numParcelas"
+        hide-details
+        required
+        outlined
+        color="primary"
+        label="Número de Parcelas"
+        @change="calcValores()"
+      />
+
+      <v-spacer></v-spacer>      
+      
+      <span class="pa-3 primary--text font-weight-bold">VALOR PARCELA:<span class="grey--text pl-2">{{ valParcela }}</span></span>
+      
+      <span class="pa-3 primary--text font-weight-bold">TOTAL:<span class="grey--text pl-2">{{ valVenda }}</span></span>
+    </v-row>
+
     <v-card-actions>
       <v-spacer></v-spacer>
       <v-btn
@@ -120,6 +143,9 @@ export default {
     dataVenda: "",
     clienteVenda: "",
     codigoVenda: "",
+    valVenda: 0,
+    valParcela: 0,
+    numParcelas: 1,
     dataAtual: new Date().toISOString().slice(0, 10),
     headers: [
       {
@@ -143,14 +169,18 @@ export default {
       qtdeProduto: "",
       precoProduto: ""
     },
-    estoqueProduto: "",
     arrayClientes: [],
     codigosClientes: [],
-    clientes: []
+    nomesClientes: [],
+    clientes: [],
+    estoqueProdutos: []
   }),
+
   mounted() {
-    this.getClientes();
+    this.getClientes()
+    this.getEstoque()
   },
+
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Novo Produto" : "Editar Produto";
@@ -184,6 +214,7 @@ export default {
             this.arrayClientes = clientes;
             this.clientes = clientes.map((item) => item.Nome);
             this.codigosClientes = clientes.map((item) => item.Id);
+            this.nomesClientes = clientes.map((item) => item.Nome);
           }
         });
       });
@@ -209,13 +240,53 @@ export default {
       }, 300);
     },
 
-    save() {
-      if (this.editedIndex > -1) {
-        Object.assign(this.products[this.editedIndex], this.editedItem);
+    save(codigo, quantidade) {
+      let quantidadeAtual = 0
+      Object.keys(this.estoqueProdutos).forEach(est => {
+        if (est == codigo) {
+          quantidadeAtual = this.estoqueProdutos[est].qtdeProduto;
+        }
+      });
+
+      if (quantidadeAtual == 0) {
+        alert("O produto de código " + codigo + " não existe em estoque");
       } else {
-        this.products.push(this.editedItem);
-      }
-      this.close();
+          if (quantidade > quantidadeAtual) {
+            alert("O produto de código " + codigo + " não possui a quantidade necessária para a venda. A quantidade em estoque é " + quantidadeAtual + ".")
+          } else {
+              if (this.editedIndex > -1) {
+                Object.assign(this.products[this.editedIndex], this.editedItem);
+                this.close();
+                this.calcValores();
+              } else {
+                this.products.push(this.editedItem);
+                this.close();
+                this.calcValores();
+              }
+          }
+        }
+
+      
+      
+    },
+
+    calcValores(){
+      this.valVenda = 0.0;
+      this.products.forEach(produto => {
+        this.valVenda = parseFloat(this.valVenda) + parseFloat(produto.precoProduto);
+      })
+      this.valParcela = this.valVenda / this.numParcelas
+    },
+
+    getEstoque(){
+      var currentUser = firebase.auth().currentUser.uid;
+      estoqueCollection.get().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          if (doc.id === currentUser) {
+            this.estoqueProdutos = doc.data();
+          }
+        });
+      });
     },
 
     lerEstoque(codigo, quantidade) {
@@ -240,30 +311,18 @@ export default {
         if (est == codigo) {
           quantidadeAtual = estoque[est].qtdeProduto;
         }
-      });
+      })
 
-      if (quantidadeAtual == 0) {
-        alert("O produto de código " + codigo + " não existe em estoque");
-      } else {
-        if (quantidade > quantidadeAtual) {
-          alert(
-            "O produto de código " +
-              codigo +
-              " não possui a quantidade necessária para a venda"
-          );
-        } else {
-          estoqueCollection.doc(userLogado).set(
-            {
-              [codigo]: {
-                qtdeProduto: +quantidadeAtual - +quantidade,
-                codigo: codigo
-              }
-            },
-            { merge: true }
-          );
-        }
-      }
-    },
+      estoqueCollection.doc(userLogado).set(
+        {
+          [codigo]: {
+            qtdeProduto: +quantidadeAtual - +quantidade,
+            codigo: codigo
+          }
+        },
+        { merge: true }
+      )
+      },
 
     retirarProdutos() {
       var userLogado = firebase.auth().currentUser.uid;
@@ -286,11 +345,12 @@ export default {
       });
     },
 
-    salvarVenda() {
+    async salvarVenda() {
       var currentUser = firebase.auth().currentUser.uid;
       var codVenda = this.generateGUID();
       this.codigoVenda = codVenda;
-      var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)];
+      var clienteNome = this.nomesClientes[this.clientes.indexOf(this.clienteVenda)]
+      var codigoCliente = this.codigosClientes[this.clientes.indexOf(this.clienteVenda)]
       vendasCollection
         .doc(currentUser)
         .set(
@@ -298,7 +358,11 @@ export default {
             [codVenda]: {
               Data: this.dataVenda,
               Cod: codVenda,
-              Cliente: codigoCliente
+              Cliente: codigoCliente,
+              NomeCliente: clienteNome,
+              Valor: this.valVenda,
+              Parcelas: this.numParcelas,
+              ValorParcela: this.valParcela
             }
           },
           { merge: true }

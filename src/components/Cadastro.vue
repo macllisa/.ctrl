@@ -178,6 +178,7 @@ export default {
               user
             ); /* eslint-disable-line no-console */
             this.cadastrarUsuarioFirestore(user.user.uid);
+            this.$router.replace("/dashboard");
             // TODO alert avisando o usuário que foi cadastrado com sucesso
           },
           error => {
